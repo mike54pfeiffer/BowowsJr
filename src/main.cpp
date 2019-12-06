@@ -375,12 +375,12 @@ void usercontrol(void) {
     LeftFrontMotor.spin(vex::directionType::rev, Controller1.Axis3.position(), vex::velocityUnits::pct);
     RightFrontMotor.spin(vex::directionType::rev, Controller1.Axis2.position(), vex::velocityUnits::pct);
     if(Controller1.ButtonL2.pressing()) { 
-        //...Spin the arm motor forward.
-        LeftIntakeMotor.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
-        RightIntakeMotor.spin(vex::directionType::rev, 80, vex::velocityUnits::pct);
+        //...Spin the arm motor out.
+        LeftIntakeMotor.spin(vex::directionType::rev, -80, vex::velocityUnits::pct);
+        RightIntakeMotor.spin(vex::directionType::fwd, -80, vex::velocityUnits::pct);
     }
     else if(Controller1.ButtonR2.pressing()) { 
-        //...Spin the arm motor backward.
+        //...Spin the arm motor in.
         LeftIntakeMotor.spin(vex::directionType::rev, 80, vex::velocityUnits::pct);
         RightIntakeMotor.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
     }
@@ -392,22 +392,15 @@ void usercontrol(void) {
         RightIntakeMotor.stop(vex::brakeType::brake);
       }
       if(Controller1.ButtonR1.pressing()){
-      //Tilts storage system forward
-
-      LeftArmMotor.spin(vex::directionType::rev, 50, vex::velocityUnits::pct);
-      RightArmMotor.spin(vex::directionType::fwd, 50, vex::velocityUnits::pct);
-      LeftTiltMotor.spin(vex::directionType::rev, 30, vex::velocityUnits::pct);
-      RightTiltMotor.spin(vex::directionType::fwd, 30, vex::velocityUnits::pct);
+      //arm system down
+        LeftArmMotor.spin(vex::directionType::fwd, -50, vex::velocityUnits::pct);
+        RightArmMotor.spin(vex::directionType::rev, -50, vex::velocityUnits::pct);
     
       }
       else if(Controller1.ButtonL1.pressing()){
-      //Tilts storage system back
-
-      LeftArmMotor.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
-      RightArmMotor.spin(vex::directionType::rev, 80, vex::velocityUnits::pct);
-      vex::task::sleep(200);
-      LeftTiltMotor.spin(vex::directionType::rev, -30, vex::velocityUnits::pct);
-      RightTiltMotor.spin(vex::directionType::fwd, -30, vex::velocityUnits::pct);
+      //arm system up
+        LeftArmMotor.spin(vex::directionType::fwd, 50, vex::velocityUnits::pct);
+        RightArmMotor.spin(vex::directionType::rev, 50, vex::velocityUnits::pct);
     
       }
     else{
@@ -416,18 +409,16 @@ void usercontrol(void) {
       RightArmMotor.stop(vex::brakeType::brake);
       LeftArmMotor.stop(vex::brakeType::brake);
     }
-     // pneumatics();
-      if(Controller1.ButtonB.pressing()){
-      LeftBackMotor.spin(vex::fwd, Controller1.Axis3.position() * 0.5, vex::velocityUnits::pct);
-      RightBackMotor.spin(vex::fwd, Controller1.Axis2.position() * 0.5, vex::velocityUnits::pct);
-      LeftFrontMotor.spin(vex::fwd, Controller1.Axis3.position() * 0.5, vex::velocityUnits::pct);
-      RightFrontMotor.spin(vex::fwd, Controller1.Axis2.position() * 0.5, vex::velocityUnits::pct);
-      }
+    // arm motor;
       if(Controller1.ButtonA.pressing()){
-      LeftBackMotor.spin(vex::fwd, Controller1.Axis3.position() , vex::velocityUnits::pct);
-      RightBackMotor.spin(vex::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
-      LeftFrontMotor.spin(vex::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
-      RightFrontMotor.spin(vex::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
+      //arms go up
+        LeftTiltMotor.spin(vex::directionType::rev, 30, vex::velocityUnits::pct);
+        RightTiltMotor.spin(vex::directionType::fwd, 30, vex::velocityUnits::pct);
+      }
+      if(Controller1.ButtonB.pressing()){
+        //arms go down
+        LeftTiltMotor.spin(vex::directionType::rev, -30, vex::velocityUnits::pct);
+        RightTiltMotor.spin(vex::directionType::fwd, -30, vex::velocityUnits::pct);
       }
     vex::task::sleep(20); // Sleep the task for a short amount of time to
                           // prevent wasted resources.
