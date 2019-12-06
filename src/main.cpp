@@ -396,17 +396,18 @@ void usercontrol(void) {
 
       LeftArmMotor.spin(vex::directionType::rev, 50, vex::velocityUnits::pct);
       RightArmMotor.spin(vex::directionType::fwd, 50, vex::velocityUnits::pct);
-      LeftTiltMotor.spin(vex::directionType::rev, 1*0.3, vex::velocityUnits::pct);
-      RightTiltMotor.spin(vex::directionType::fwd, 1*0.3, vex::velocityUnits::pct);
+      LeftTiltMotor.spin(vex::directionType::rev, 30, vex::velocityUnits::pct);
+      RightTiltMotor.spin(vex::directionType::fwd, 30, vex::velocityUnits::pct);
     
       }
       else if(Controller1.ButtonL1.pressing()){
       //Tilts storage system back
 
-      LeftArmMotor.spin(vex::directionType::fwd, 20, vex::velocityUnits::pct);
-      RightArmMotor.spin(vex::directionType::rev, 20, vex::velocityUnits::pct);
-      LeftTiltMotor.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
-      RightTiltMotor.spin(vex::directionType::rev, 40, vex::velocityUnits::pct);
+      LeftArmMotor.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
+      RightArmMotor.spin(vex::directionType::rev, 80, vex::velocityUnits::pct);
+      vex::task::sleep(200);
+      LeftTiltMotor.spin(vex::directionType::rev, -30, vex::velocityUnits::pct);
+      RightTiltMotor.spin(vex::directionType::fwd, -30, vex::velocityUnits::pct);
     
       }
     else{
