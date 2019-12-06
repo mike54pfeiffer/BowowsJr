@@ -112,26 +112,26 @@ void Move(double Tiles, double Velocity, int Time) {
   RightBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg );  
 }
 
-void ArmMove() {
+void ArmMove(int Velocity, double Revolution) {
 
-  LeftArmMotor.setVelocity(50,vex::velocityUnits::pct);
-  RightArmMotor.setVelocity(50,vex::velocityUnits::pct);
+  LeftArmMotor.setVelocity(Velocity,vex::velocityUnits::pct);
+  RightArmMotor.setVelocity(Velocity,vex::velocityUnits::pct);
 
-  LeftArmMotor.rotateFor(vex::directionType::fwd, 1.4, vex::rotationUnits::rev, false);
-  RightArmMotor.rotateFor(vex::directionType::rev, 1.4, vex::rotationUnits::rev);
+  LeftArmMotor.rotateFor(vex::directionType::fwd, Revolution, vex::rotationUnits::rev, false);
+  RightArmMotor.rotateFor(vex::directionType::rev, Revolution, vex::rotationUnits::rev);
 
   LeftArmMotor.stop(brakeType::hold);
   RightArmMotor.stop(brakeType::hold);
 
 }
-void TiltMove() {
+void TiltMove(int Velocity, double Revolution) {
   Timeout(1);
 
-  LeftTiltMotor.setVelocity(50,vex::velocityUnits::pct);
-  RightTiltMotor.setVelocity(50,vex::velocityUnits::pct);
+  LeftTiltMotor.setVelocity(Velocity,vex::velocityUnits::pct);
+  RightTiltMotor.setVelocity(Velocity,vex::velocityUnits::pct);
 
-  LeftTiltMotor.rotateFor(vex::directionType::fwd, .5, vex::rotationUnits::rev, false);
-  RightTiltMotor.rotateFor(vex::directionType::rev, .5, vex::rotationUnits::rev);
+  LeftTiltMotor.rotateFor(vex::directionType::fwd, Revolution, vex::rotationUnits::rev, false);
+  RightTiltMotor.rotateFor(vex::directionType::rev, Revolution, vex::rotationUnits::rev);
 
 
   LeftTiltMotor.stop(brakeType::hold);
@@ -322,37 +322,56 @@ void autonomous(void) {
 
   if(side == BLUE)
   {
-    TiltMove();
+    ArmMove(40,.1);
+    TiltMove(30,.5);
     LeftTiltMotor.stop(brakeType::hold);
     RightTiltMotor.stop(brakeType::hold);
-    vex::task::sleep(100);
-    ArmMove();
+    ArmMove(25,1.3);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
-    Move(2,30,3);
-    GyroTurn.GyroTurn(135, 35);
-    Move(3, 90, 5);
+    vex::task::sleep(500);
+    Move(2,27,3);
+    GyroTurn.GyroTurn(106, 35);
+    vex::task::sleep(500);
+    Move(1.2,25, 2);
+    GyroTurn.GyroTurn(11,35);
+    vex::task::sleep(300);
+    Move(.5,25,2);
+    GyroTurn.GyroTurn(15,35);
+    vex::task::sleep(300);
+    Move(1.5,60,2);
     Move(-1, 80, 2);
-    GyroTurn.GyroTurn(125,35);
-    Move(-2, 35, 3);
+    GyroTurn.GyroTurn(151,35);
+    Move(-1.5, 35, 2);
+    TiltMove(-30,-.3);
+    LeftTiltMotor.stop(brakeType::hold);
+    RightTiltMotor.stop(brakeType::hold);
+    vex::task::sleep(500);
+    ArmMove(-25,-1.5);
+    LeftArmMotor.stop(brakeType::hold);
+    RightArmMotor.stop(brakeType::hold);
+    vex::task::sleep(500);
     Move(3, 35, 3);
     GyroTurn.GyroTurn(-145, 35);
-    Move(3, 50, 4);
+    Move(3,65, 4);
     Move(-1,70, 2);
   }
          
   if(side == RED)
   {
-    TiltMove();
-    ArmMove();
+    TiltMove(30,.5);
+    ArmMove(25,1.4);
     LeftArmMotor.stop(brakeType::hold);
    RightArmMotor.stop(brakeType::hold);
     Move(2,28,3 );
     GyroTurn.GyroTurn(-126, 35);
-    Move(3, 50, 5);
+    vex::task::sleep(1000);
+    Move(3, 55, 5);
     Move(-1.1, 70, 2);
-    GyroTurn.GyroTurn(-113,35);
+    GyroTurn.GyroTurn(-131,35);
     Move(-2, 35, 3);
+    ArmMove(-25,-1.5);
+    vex::task::sleep(500);
     Move(3, 35, 3);
     GyroTurn.GyroTurn(155, 35);
     Move(3,50,4);
@@ -361,8 +380,8 @@ void autonomous(void) {
 
   if(side == TEST)
   {
-    TiltMove();
-    ArmMove();
+    TiltMove(30,.5);
+    ArmMove(25,1.4);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
   }
