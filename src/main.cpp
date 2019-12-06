@@ -55,6 +55,8 @@ void Timeout(int Time) {
   RightBackMotor.setTimeout(Time, vex::timeUnits::sec);
   LeftIntakeMotor.setTimeout(Time, vex::timeUnits::sec);
   RightIntakeMotor.setTimeout(Time, vex::timeUnits::sec);
+  LeftArmMotor.setTimeout(Time, vex::timeUnits::sec);
+  RightArmMotor.setTimeout(Time, vex::timeUnits::sec);
 }
 
 /*--------------------------------------------------------------------------
@@ -120,19 +122,18 @@ void ArmMove(int Velocity, double Revolution) {
   LeftArmMotor.rotateFor(vex::directionType::fwd, Revolution, vex::rotationUnits::rev, false);
   RightArmMotor.rotateFor(vex::directionType::rev, Revolution, vex::rotationUnits::rev);
 
+
   LeftArmMotor.stop(brakeType::hold);
   RightArmMotor.stop(brakeType::hold);
 
 }
 void TiltMove(int Velocity, double Revolution) {
-  Timeout(1);
 
   LeftTiltMotor.setVelocity(Velocity,vex::velocityUnits::pct);
   RightTiltMotor.setVelocity(Velocity,vex::velocityUnits::pct);
 
   LeftTiltMotor.rotateFor(vex::directionType::fwd, Revolution, vex::rotationUnits::rev, false);
   RightTiltMotor.rotateFor(vex::directionType::rev, Revolution, vex::rotationUnits::rev);
-
 
   LeftTiltMotor.stop(brakeType::hold);
   RightTiltMotor.stop(brakeType::hold);
@@ -214,94 +215,6 @@ void pneumatics(){
     }
   }
 }
-/*---------------------------------------------------------------------------
-  Intake
-
-    This function starts the intake to be able to take in a cube or drop it
-    
-    Variables:
-    Varient(1, 2, 3, or 4) 
-     1- pickup  
-     2- drop 
-     3- intake while going forward (experimental)
-     4- drop while going reverse  (experimental)
-
-    Notes:
-
----------------------------------------------------------------------------*/
-
-void Intake2 (int rot) {
-  LeftIntakeMotor.setVelocity (60 *rot, vex::velocityUnits::pct);
-    RightIntakeMotor.setVelocity(-60 *rot, vex::velocityUnits::pct);
-
-    LeftIntakeMotor.spinFor(.25, vex::timeUnits::sec);
-    RightIntakeMotor.spinFor(.25, vex::timeUnits::sec);
-}
-
-
-void Intake(int Varient) {
-  double Velocity = 50;
-  switch (Varient) {
-  case 1:         // This case will only turn the intake motor forward
-    Timeout(1);
-
-    LeftIntakeMotor.setVelocity (60, vex::velocityUnits::pct);
-    RightIntakeMotor.setVelocity(-60, vex::velocityUnits::pct);
-
-    LeftIntakeMotor.spinFor(1, vex::timeUnits::sec);
-    RightIntakeMotor.spinFor(1, vex::timeUnits::sec);
-    break;
-
-  case 2:         // This case will only turn the intake motor reverse
-    Timeout(1);
-
-    LeftIntakeMotor.setVelocity (-60, vex::velocityUnits::pct);
-    RightIntakeMotor.setVelocity(60, vex::velocityUnits::pct);
-
-    LeftIntakeMotor.spinFor(.25, vex::timeUnits::sec);
-    RightIntakeMotor.spinFor(.25, vex::timeUnits::sec);
-    break;
-
-  case 3:         // This case will only turn the intake motor forward while moving forward (experimental)
-    Timeout(1);
-
-    LeftFrontMotor.setVelocity(Velocity, vex::velocityUnits::pct);
-    RightFrontMotor.setVelocity(Velocity, vex::velocityUnits::pct);
-    LeftBackMotor.setVelocity(Velocity, vex::velocityUnits::pct);
-    RightBackMotor.setVelocity(Velocity, vex::velocityUnits::pct);
-    LeftIntakeMotor.setVelocity (60, vex::velocityUnits::pct);
-    RightIntakeMotor.setVelocity(-60, vex::velocityUnits::pct);
-
-    LeftFrontMotor.spinFor(.25, vex::timeUnits::sec); 
-    RightFrontMotor.spinFor(.25, vex::timeUnits::sec);
-    LeftBackMotor.spinFor(.25, vex::timeUnits::sec);
-    RightBackMotor.spinFor(.25, vex::timeUnits::sec);
-    LeftIntakeMotor.spinFor(.30, vex::timeUnits::sec);
-    RightIntakeMotor.spinFor(.30, vex::timeUnits::sec);
-
-    break;
-
-  case 4:         // This case will only turn the intake motor reverse while moving reverse (experimental)
-    Timeout(1);
-
-    LeftFrontMotor.setVelocity(-Velocity, vex::velocityUnits::pct);
-    RightFrontMotor.setVelocity(-Velocity, vex::velocityUnits::pct);
-    LeftBackMotor.setVelocity(-Velocity, vex::velocityUnits::pct);
-    RightBackMotor.setVelocity(-Velocity, vex::velocityUnits::pct);
-    LeftIntakeMotor.setVelocity (-60, vex::velocityUnits::pct);
-    RightIntakeMotor.setVelocity(60, vex::velocityUnits::pct);
-
-    LeftFrontMotor.spinFor(.25, vex::timeUnits::sec); 
-    RightFrontMotor.spinFor(.25, vex::timeUnits::sec);
-    LeftBackMotor.spinFor(.25, vex::timeUnits::sec);
-    RightBackMotor.spinFor(.25, vex::timeUnits::sec);
-    LeftIntakeMotor.spinFor(.30, vex::timeUnits::sec);
-    RightIntakeMotor.spinFor(.30, vex::timeUnits::sec);
-
-    break;
-  }
-  
-}
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -315,37 +228,40 @@ void Intake(int Varient) {
 
 void autonomous(void) {
   enum Color{RED, BLUE, TEST, BS};
-  Color side = BLUE;
+  Color side = RED;
   Bot test;
   GyroSensor GyroTurn;
   LineSensor lineTracker;
 
   if(side == BLUE)
   {
-    ArmMove(40,.1);
-    TiltMove(30,.5);
+    ArmMove(80,.2);
+    vex::task::sleep(100);
+    TiltMove(30,.4);
     LeftTiltMotor.stop(brakeType::hold);
     RightTiltMotor.stop(brakeType::hold);
-    ArmMove(25,1.3);
+    vex::task::sleep(100);
+    ArmMove(25,1.1);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
     vex::task::sleep(500);
     Move(2,27,3);
     GyroTurn.GyroTurn(106, 35);
     vex::task::sleep(500);
-    Move(1.2,25, 2);
+    Move(.5,25, 1);
     GyroTurn.GyroTurn(11,35);
     vex::task::sleep(300);
     Move(.5,25,2);
-    GyroTurn.GyroTurn(15,35);
-    vex::task::sleep(300);
-    Move(1.5,60,2);
+    GyroTurn.GyroTurn(6,25);
+    vex::task::sleep(100);
+    Move(1.2,60,2);
+    vex::task::sleep(100);
     Move(-1, 80, 2);
-    GyroTurn.GyroTurn(151,35);
+    GyroTurn.GyroTurn(131,35);
     Move(-1.5, 35, 2);
-    TiltMove(-30,-.3);
+    TiltMove(-30,-.2);
     vex::task::sleep(500);
-    ArmMove(-25,-1.5);
+    ArmMove(-25,-1.3);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
     vex::task::sleep(500);
@@ -357,30 +273,32 @@ void autonomous(void) {
          
   if(side == RED)
   {
-    ArmMove(40,.1);
+    ArmMove(80,.2);
+    vex::task::sleep(100);
     TiltMove(30,.5);
     LeftTiltMotor.stop(brakeType::hold);
     RightTiltMotor.stop(brakeType::hold);
-    ArmMove(25,1.3);
+    ArmMove(25,1.1);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
     vex::task::sleep(500);
     Move(2,27,3);
     GyroTurn.GyroTurn(-106, 35);
     vex::task::sleep(500);
-    Move(1.2,25, 2);
+    Move(.5,25, 1);
     GyroTurn.GyroTurn(-11,35);
     vex::task::sleep(300);
     Move(.5,25,2);
-    GyroTurn.GyroTurn(-15,35);
-    vex::task::sleep(300);
-    Move(1.5,60,2);
+    GyroTurn.GyroTurn(-6,25);
+    vex::task::sleep(100);
+    Move(1.3,60,2);
+    vex::task::sleep(100);
     Move(-1, 80, 2);
-    GyroTurn.GyroTurn(-151,35);
+    GyroTurn.GyroTurn(-131,35);
     Move(-1.5, 35, 2);
     TiltMove(-30,-.3);
     vex::task::sleep(500);
-    ArmMove(-25,-1.5);
+    ArmMove(-25,-.6);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
     vex::task::sleep(500);
