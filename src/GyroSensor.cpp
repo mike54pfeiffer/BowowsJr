@@ -43,9 +43,9 @@ void GyroSensor::GyroTurn(double DegreeAmount, int Velocity) {
       while (Gyro.value(rotationUnits::deg) <= DegreeAmount)
       {
         Brain.Screen.printAt( 10, 50, "Gyro %f", Gyro.value( rotationUnits::deg ) );
-        LeftBackMotor.spin(directionType::rev); 
+        LeftBackMotor.spin(directionType::fwd); 
         LeftFrontMotor.spin(directionType::rev); 
-        RightBackMotor.spin(directionType::fwd); 
+        RightBackMotor.spin(directionType::rev); 
         RightFrontMotor.spin(directionType::fwd);
       }
     }
@@ -54,9 +54,9 @@ void GyroSensor::GyroTurn(double DegreeAmount, int Velocity) {
       while (Gyro.value(rotationUnits::deg) >= DegreeAmount)
       {
         Brain.Screen.printAt( 10, 50, "Gyro %f", Gyro.value( rotationUnits::deg ) );
-        LeftBackMotor.spin(directionType::fwd); 
+        LeftBackMotor.spin(directionType::rev); 
         LeftFrontMotor.spin(directionType::fwd); 
-        RightBackMotor.spin(directionType::rev); 
+        RightBackMotor.spin(directionType::fwd); 
         RightFrontMotor.spin(directionType::rev);
       }
     }

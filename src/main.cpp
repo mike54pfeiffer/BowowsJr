@@ -105,18 +105,39 @@ void Move(double Tiles, double Velocity, int Time) {
   RightFrontMotor.setVelocity(Velocity, vex::velocityUnits::pct);
   LeftBackMotor.setVelocity(Velocity, vex::velocityUnits::pct);
   RightBackMotor.setVelocity(Velocity, vex::velocityUnits::pct);
-  LeftIntakeMotor.setVelocity(-Velocity*5, vex::velocityUnits::pct);
-  RightIntakeMotor.setVelocity(-Velocity*5, vex::velocityUnits::pct);
 
-  LeftFrontMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false); // This command must be non blocking.
-  RightFrontMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
+  LeftFrontMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, false); // This command must be non blocking.
+  RightFrontMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, false);
   LeftBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
-  RightBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
-  LeftIntakeMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
-  RightIntakeMotor.rotateFor(FinalDistance, vex::rotationUnits::deg);
-  
+  RightBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg );  
 }
 
+void ArmMove() {
+
+  LeftArmMotor.setVelocity(50,vex::velocityUnits::pct);
+  RightArmMotor.setVelocity(50,vex::velocityUnits::pct);
+
+  LeftArmMotor.rotateFor(vex::directionType::fwd, 1.4, vex::rotationUnits::rev, false);
+  RightArmMotor.rotateFor(vex::directionType::rev, 1.4, vex::rotationUnits::rev);
+
+  LeftArmMotor.stop(brakeType::hold);
+  RightArmMotor.stop(brakeType::hold);
+
+}
+void TiltMove() {
+  Timeout(1);
+
+  LeftTiltMotor.setVelocity(50,vex::velocityUnits::pct);
+  RightTiltMotor.setVelocity(50,vex::velocityUnits::pct);
+
+  LeftTiltMotor.rotateFor(vex::directionType::fwd, .5, vex::rotationUnits::rev, false);
+  RightTiltMotor.rotateFor(vex::directionType::rev, .5, vex::rotationUnits::rev);
+
+
+  LeftTiltMotor.stop(brakeType::hold);
+  RightTiltMotor.stop(brakeType::hold);
+
+}
 /*---------------------------------------------------------------------------
   Turn
     This function tells the robot to turn either to the right or left,
@@ -143,8 +164,8 @@ Conversion(Tiles);
   //RightIntakeMotor.setVelocity(Velocity, vex::velocityUnits::pct);
 
   LeftFrontMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, false); // This command must be non blocking.
-  RightFrontMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
-  LeftBackMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, false);
+  RightFrontMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, false);
+  LeftBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
   RightBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg,true);
  // LeftIntakeMotor.rotateFor(FinalDistance, vex::rotationUnits::deg,true);
  // RightIntakeMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg);
@@ -162,10 +183,10 @@ void TurnRight(double Tiles, double Velocity, double Time) {
  // LeftIntakeMotor.setVelocity(Velocity, vex::velocityUnits::pct);
  // RightIntakeMotor.setVelocity(Velocity, vex::velocityUnsits::pct);
 
-  LeftFrontMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false); // This command must be non blocking.
+  LeftFrontMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, false); // This command must be non blocking.
   RightFrontMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, false);
   LeftBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
-  RightBackMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, true);
+  RightBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, true);
   //LeftIntakeMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, true);
   //RightIntakeMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg);
 }
@@ -227,8 +248,8 @@ void Intake(int Varient) {
     LeftIntakeMotor.setVelocity (60, vex::velocityUnits::pct);
     RightIntakeMotor.setVelocity(-60, vex::velocityUnits::pct);
 
-    LeftIntakeMotor.spinFor(.25, vex::timeUnits::sec);
-    RightIntakeMotor.spinFor(.25, vex::timeUnits::sec);
+    LeftIntakeMotor.spinFor(1, vex::timeUnits::sec);
+    RightIntakeMotor.spinFor(1, vex::timeUnits::sec);
     break;
 
   case 2:         // This case will only turn the intake motor reverse
@@ -294,27 +315,38 @@ void Intake(int Varient) {
 
 void autonomous(void) {
   enum Color{RED, BLUE, TEST, BS};
-  Color side = TEST;
+  Color side = BLUE;
   Bot test;
   GyroSensor GyroTurn;
   LineSensor lineTracker;
 
   if(side == BLUE)
   {
-    Move(2,28,3);
-    GyroTurn.GyroTurn(131, 35);
-    Move(3, 50, 5);
-    Move(-1.1, 70, 2);
-    GyroTurn.GyroTurn(113,35);
+    TiltMove();
+    LeftTiltMotor.stop(brakeType::hold);
+    RightTiltMotor.stop(brakeType::hold);
+    vex::task::sleep(100);
+    ArmMove();
+    LeftArmMotor.stop(brakeType::hold);
+    RightArmMotor.stop(brakeType::hold);
+    Move(2,30,3);
+    GyroTurn.GyroTurn(135, 35);
+    Move(3, 90, 5);
+    Move(-1, 80, 2);
+    GyroTurn.GyroTurn(125,35);
     Move(-2, 35, 3);
     Move(3, 35, 3);
-    GyroTurn.GyroTurn(-155, 35);
+    GyroTurn.GyroTurn(-145, 35);
     Move(3, 50, 4);
-    Move(-2,50, 2);
+    Move(-1,70, 2);
   }
          
   if(side == RED)
   {
+    TiltMove();
+    ArmMove();
+    LeftArmMotor.stop(brakeType::hold);
+   RightArmMotor.stop(brakeType::hold);
     Move(2,28,3 );
     GyroTurn.GyroTurn(-126, 35);
     Move(3, 50, 5);
@@ -329,7 +361,10 @@ void autonomous(void) {
 
   if(side == TEST)
   {
-    test.parabolicTurn('l', 359);
+    TiltMove();
+    ArmMove();
+    LeftArmMotor.stop(brakeType::hold);
+    RightArmMotor.stop(brakeType::hold);
   }
   if(side == BS)
   {
