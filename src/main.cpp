@@ -233,79 +233,110 @@ void autonomous(void) {
   GyroSensor GyroTurn;
   LineSensor lineTracker;
 
-  if(side == BLUE)
+  if(side == BLUE) //need to fix (only works for red side)
   {
-    ArmMove(80,.2);
+    //pull up arms and tilt motor
+    ArmMove(85,.2);
     vex::task::sleep(100);
-    TiltMove(30,.4);
+    TiltMove(10,.5);
     LeftTiltMotor.stop(brakeType::hold);
     RightTiltMotor.stop(brakeType::hold);
-    vex::task::sleep(100);
-    ArmMove(25,1.1);
+    ArmMove(25,1.0);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
     vex::task::sleep(500);
-    Move(2,27,3);
-    GyroTurn.GyroTurn(106, 35);
+    //move forward to 4 stack tower
+    Move(2.5,27,3);
+    //turn to face front toward tower
+    GyroTurn.GyroTurn(130, 25);
     vex::task::sleep(500);
-    Move(.5,25, 1);
-    GyroTurn.GyroTurn(11,35);
-    vex::task::sleep(300);
-    Move(.5,25,2);
-    GyroTurn.GyroTurn(6,25);
-    vex::task::sleep(100);
-    Move(1.2,60,2);
-    vex::task::sleep(100);
-    Move(-1, 80, 2);
-    GyroTurn.GyroTurn(131,35);
-    Move(-1.5, 35, 2);
-    TiltMove(-30,-.2);
-    vex::task::sleep(500);
-    ArmMove(-25,-1.3);
+    //first push into tower and then lower arms and intake top block
+    Move(.5,20, 3);
+    //LeftIntakeMotor.spin(vex::directionType::rev, 20, vex::velocityUnits::pct);
+    //RightIntakeMotor.spin(vex::directionType::fwd, 20, vex::velocityUnits::pct);
+    //ArmMove(25,-0.15);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
-    vex::task::sleep(500);
-    Move(3, 35, 3);
-    GyroTurn.GyroTurn(-145, 35);
-    Move(3,65, 4);
-    Move(-1,70, 2);
+    //LeftIntakeMotor.stop(brakeType::hold);
+    //RightIntakeMotor.stop(brakeType::hold);
+    vex::task::sleep(100);
+
+    //firt turn to callibrate
+    GyroTurn.GyroTurn(30,25);
+    vex::task::sleep(150);
+    //second push into tower
+    Move(1.2,25,2);
+    //second turn to callibrate
+    GyroTurn.GyroTurn(-29,25);
+    vex::task::sleep(150);
+    //third push into tower into score
+    Move(1.7,35,2);
+    vex::task::sleep(150);
+    //back up
+    Move(-0.75, 90, 2);
+    vex::task::sleep(150);
+    /*
+    //turn to realine
+    GyroTurn.GyroTurn(-90,35);
+    Move(-0.7, 50, 3);
+    vex::task::sleep(150);
+    //move forward toward tower
+    Move(1.5, 50, 3);
+    vex::task::sleep(150);
+    */
   }
          
   if(side == RED)
   {
-    ArmMove(80,.2);
+    //pull up arms and tilt motor
+    ArmMove(85,.2);
     vex::task::sleep(100);
-    TiltMove(30,.5);
+    TiltMove(10,.5);
     LeftTiltMotor.stop(brakeType::hold);
     RightTiltMotor.stop(brakeType::hold);
-    ArmMove(25,1.1);
+    ArmMove(25,1.0);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
     vex::task::sleep(500);
-    Move(2,27,3);
-    GyroTurn.GyroTurn(-106, 35);
+    //move forward to 4 stack tower
+    Move(2.5,27,3);
+    //turn to face front toward tower
+    GyroTurn.GyroTurn(-130, 25);
     vex::task::sleep(500);
-    Move(.5,25, 1);
-    GyroTurn.GyroTurn(-11,35);
-    vex::task::sleep(300);
-    Move(.5,25,2);
-    GyroTurn.GyroTurn(-6,25);
-    vex::task::sleep(100);
-    Move(1.3,60,2);
-    vex::task::sleep(100);
-    Move(-1, 80, 2);
-    GyroTurn.GyroTurn(-131,35);
-    Move(-1.5, 35, 2);
-    TiltMove(-30,-.3);
-    vex::task::sleep(500);
-    ArmMove(-25,-.6);
+    //first push into tower and then lower arms and intake top block
+    Move(.5,20, 3);
+    //LeftIntakeMotor.spin(vex::directionType::rev, 20, vex::velocityUnits::pct);
+    //RightIntakeMotor.spin(vex::directionType::fwd, 20, vex::velocityUnits::pct);
+    //ArmMove(25,-0.15);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
-    vex::task::sleep(500);
-    Move(3, 35, 3);
-    GyroTurn.GyroTurn(145, 35);
-    Move(3,65, 4);
-    Move(-1,70, 2);
+    //LeftIntakeMotor.stop(brakeType::hold);
+    //RightIntakeMotor.stop(brakeType::hold);
+    vex::task::sleep(100);
+
+    //firt turn to callibrate
+    GyroTurn.GyroTurn(-30,25);
+    vex::task::sleep(150);
+    //second push into tower
+    Move(1.2,25,2);
+    //second turn to callibrate
+    GyroTurn.GyroTurn(29,25);
+    vex::task::sleep(150);
+    //third push into tower into score
+    Move(1.7,35,2);
+    vex::task::sleep(150);
+    //back up
+    Move(-0.75, 90, 2);
+    vex::task::sleep(150);
+    /*
+    //turn to realine
+    GyroTurn.GyroTurn(90,35);
+    Move(-0.7, 50, 3);
+    vex::task::sleep(150);
+    //move forward toward tower
+    Move(1.5, 50, 3);
+    vex::task::sleep(150);
+    */
   }
 
   /*
