@@ -228,7 +228,7 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{RED, BLUE, TEST};
-  Color side = RED;
+  Color side = BLUE;
   Bot test;
   GyroSensor GyroTurn;
   LineSensor lineTracker;
@@ -238,20 +238,23 @@ void autonomous(void) {
     //pull up arms and tilt motor
     ArmMove(85,.2);
     vex::task::sleep(100);
-    TiltMove(10,.5);
+    TiltMove(10,.2);
     LeftTiltMotor.stop(brakeType::hold);
     RightTiltMotor.stop(brakeType::hold);
     ArmMove(25,1.0);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
+    TiltMove(10,.3);
+    LeftTiltMotor.stop(brakeType::hold);
+    RightTiltMotor.stop(brakeType::hold);
     vex::task::sleep(500);
     //move forward to 4 stack tower
     Move(2.5,27,3);
     //turn to face front toward tower
-    GyroTurn.GyroTurn(130, 25);
+    GyroTurn.GyroTurn(130, 30);
     vex::task::sleep(500);
     //first push into tower and then lower arms and intake top block
-    Move(.5,20, 3);
+    Move(.6,15, 3);
     //LeftIntakeMotor.spin(vex::directionType::rev, 20, vex::velocityUnits::pct);
     //RightIntakeMotor.spin(vex::directionType::fwd, 20, vex::velocityUnits::pct);
     //ArmMove(25,-0.15);
@@ -265,7 +268,7 @@ void autonomous(void) {
     GyroTurn.GyroTurn(30,25);
     vex::task::sleep(150);
     //second push into tower
-    Move(1.2,25,2);
+    Move(0.7,30,2);
     //second turn to callibrate
     GyroTurn.GyroTurn(-29,25);
     vex::task::sleep(150);
@@ -291,20 +294,23 @@ void autonomous(void) {
     //pull up arms and tilt motor
     ArmMove(85,.2);
     vex::task::sleep(100);
-    TiltMove(10,.5);
+    TiltMove(10,.2);
     LeftTiltMotor.stop(brakeType::hold);
     RightTiltMotor.stop(brakeType::hold);
     ArmMove(25,1.0);
     LeftArmMotor.stop(brakeType::hold);
     RightArmMotor.stop(brakeType::hold);
+    TiltMove(10,.3);
+    LeftTiltMotor.stop(brakeType::hold);
+    RightTiltMotor.stop(brakeType::hold);
     vex::task::sleep(500);
     //move forward to 4 stack tower
     Move(2.5,27,3);
     //turn to face front toward tower
-    GyroTurn.GyroTurn(-130, 25);
+    GyroTurn.GyroTurn(-125, 30);
     vex::task::sleep(500);
     //first push into tower and then lower arms and intake top block
-    Move(.5,20, 3);
+    Move(.6,15, 3);
     //LeftIntakeMotor.spin(vex::directionType::rev, 20, vex::velocityUnits::pct);
     //RightIntakeMotor.spin(vex::directionType::fwd, 20, vex::velocityUnits::pct);
     //ArmMove(25,-0.15);
@@ -315,12 +321,12 @@ void autonomous(void) {
     vex::task::sleep(100);
 
     //firt turn to callibrate
-    GyroTurn.GyroTurn(-30,25);
+    GyroTurn.GyroTurn(-35,25);
     vex::task::sleep(150);
     //second push into tower
-    Move(1.2,25,2);
+    Move(0.5,30,2);
     //second turn to callibrate
-    GyroTurn.GyroTurn(29,25);
+    GyroTurn.GyroTurn(30,25);
     vex::task::sleep(150);
     //third push into tower into score
     Move(1.7,35,2);
@@ -480,14 +486,14 @@ void usercontrol(void) {
       }
       if(Controller1.ButtonR1.pressing()){
       //arm system down
-        LeftArmMotor.spin(vex::directionType::fwd, -50, vex::velocityUnits::pct);
-        RightArmMotor.spin(vex::directionType::rev, -50, vex::velocityUnits::pct);
+        LeftArmMotor.spin(vex::directionType::fwd, -35, vex::velocityUnits::pct);
+        RightArmMotor.spin(vex::directionType::rev, -35, vex::velocityUnits::pct);
     
       }
       else if(Controller1.ButtonL1.pressing()){
       //arm system up
-        LeftArmMotor.spin(vex::directionType::fwd, 50, vex::velocityUnits::pct);
-        RightArmMotor.spin(vex::directionType::rev, 50, vex::velocityUnits::pct);
+        LeftArmMotor.spin(vex::directionType::fwd, 35, vex::velocityUnits::pct);
+        RightArmMotor.spin(vex::directionType::rev, 35, vex::velocityUnits::pct);
     
       }
     else{
