@@ -228,7 +228,7 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{RED, BLUE, TEST};
-  Color side = BLUE;
+  Color side = RED;
   Bot test;
   GyroSensor GyroTurn;
   LineSensor lineTracker;
