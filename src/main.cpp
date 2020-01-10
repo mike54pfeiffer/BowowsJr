@@ -228,26 +228,13 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{RED, BLUE, TEST};
-  Color side = BLUE;
+  Color side = RED;
   Bot test;
   GyroSensor GyroTurn;
   LineSensor lineTracker;
 
   if(side == BLUE) //need to fix (only works for red side)
   {
-    //pull up arms and tilt motor
-    ArmMove(85,.2);
-    vex::task::sleep(100);
-    TiltMove(10,.2);
-    LeftTiltMotor.stop(brakeType::hold);
-    RightTiltMotor.stop(brakeType::hold);
-    ArmMove(25,1.0);
-    LeftArmMotor.stop(brakeType::hold);
-    RightArmMotor.stop(brakeType::hold);
-    TiltMove(10,.3);
-    LeftTiltMotor.stop(brakeType::hold);
-    RightTiltMotor.stop(brakeType::hold);
-    vex::task::sleep(500);
     //move forward to 4 stack tower
     Move(2.5,27,3);
     //turn to face front toward tower
@@ -264,7 +251,7 @@ void autonomous(void) {
     //RightIntakeMotor.stop(brakeType::hold);
     vex::task::sleep(100);
 
-    //firt turn to callibrate
+    //first turn to callibrate
     GyroTurn.GyroTurn(30,25);
     vex::task::sleep(150);
     //second push into tower
@@ -291,19 +278,6 @@ void autonomous(void) {
          
   if(side == RED)
   {
-    //pull up arms and tilt motor
-    ArmMove(85,.2);
-    vex::task::sleep(100);
-    TiltMove(10,.2);
-    LeftTiltMotor.stop(brakeType::hold);
-    RightTiltMotor.stop(brakeType::hold);
-    ArmMove(25,1.0);
-    LeftArmMotor.stop(brakeType::hold);
-    RightArmMotor.stop(brakeType::hold);
-    TiltMove(10,.3);
-    LeftTiltMotor.stop(brakeType::hold);
-    RightTiltMotor.stop(brakeType::hold);
-    vex::task::sleep(500);
     //move forward to 4 stack tower
     Move(2.5,27,3);
     //turn to face front toward tower
@@ -497,10 +471,8 @@ void usercontrol(void) {
     
       }
     else{
-      RightTiltMotor.stop(vex::brakeType::brake);
-      LeftTiltMotor.stop(vex::brakeType::brake);
-      RightArmMotor.stop(vex::brakeType::brake);
-      LeftArmMotor.stop(vex::brakeType::brake);
+      RightArmMotor.stop(vex::brakeType::hold);
+      LeftArmMotor.stop(vex::brakeType::hold);
     }
     // arm motor;
       if(Controller1.ButtonA.pressing()){
