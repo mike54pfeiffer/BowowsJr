@@ -236,28 +236,32 @@ void autonomous(void) {
   if(side == BLUE)
   {
     //move forward to 4 stack tower
-    Move(2.5, -27, 3);
+    Move(-2.0, 20, 5);
+    LeftFrontMotor.stop(vex::brakeType::hold);
+    RightFrontMotor.stop(vex::brakeType::hold);
+    LeftBackMotor.stop(vex::brakeType::hold);
+    RightBackMotor.stop(vex::brakeType::hold);
 
     //turn to face front toward tower
-    GyroTurn.GyroTurn(130, 30);
+    GyroTurn.GyroTurn(90, 25);
     vex::task::sleep(250);
 
     //first push into tower and then lower arms and intake top block
-    Move(.6, -15, 3);
+    Move(-.6, 25, 3);
 
     //first turn to callibrate
     GyroTurn.GyroTurn(30, 25);
     vex::task::sleep(250);
 
     //second push into tower
-    Move(0.7, -30, 2);
+    Move(-0.7, 30, 2);
 
     //second turn to callibrate
     GyroTurn.GyroTurn(-29, 25);
     vex::task::sleep(250);
 
     //third push into tower into score
-    Move(1.7, -35, 2);
+    Move(-1.7, 35, 2);
     vex::task::sleep(250);
     
     //back up
@@ -268,28 +272,32 @@ void autonomous(void) {
   if(side == RED)
   {
     //move forward to 4 stack tower
-    Move(2.5, -27, 3);
+    Move(-2.25, 40, 3);
+    LeftFrontMotor.stop(vex::brakeType::hold);
+    RightFrontMotor.stop(vex::brakeType::hold);
+    LeftBackMotor.stop(vex::brakeType::hold);
+    RightBackMotor.stop(vex::brakeType::hold);
 
     //turn to face front toward tower
     GyroTurn.GyroTurn(-125, 30);
     vex::task::sleep(250);
 
     //first push into tower and then lower arms and intake top block
-    Move(.6, -15, 3);
+    Move(-.6, 25, 3);
 
     //firt turn to callibrate
     GyroTurn.GyroTurn(-35, 25);
     vex::task::sleep(250);
 
     //second push into tower
-    Move(0.5, -30, 2);
+    Move(-0.5, 30, 2);
 
     //second turn to callibrate
     GyroTurn.GyroTurn(30, 25);
     vex::task::sleep(250);
 
     //third push into tower into score
-    Move(1.7, -35, 2);
+    Move(-1.7, 35, 2);
     vex::task::sleep(250);
 
     //back up
@@ -299,7 +307,14 @@ void autonomous(void) {
 
   if(side == TEST)
   {
-    
+    LeftFrontMotor.stop(vex::brakeType::hold);
+    RightFrontMotor.stop(vex::brakeType::hold);
+    LeftBackMotor.stop(vex::brakeType::hold);
+    RightBackMotor.stop(vex::brakeType::hold);
+    GyroTurn.GyroTurn(90, 40);
+    GyroTurn.GyroTurn(90, 40);
+    GyroTurn.GyroTurn(90, 40);
+    GyroTurn.GyroTurn(90, 40);
   }
 }
 
