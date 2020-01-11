@@ -16,6 +16,22 @@
     Could a second gyro be added to create make the Tilt Motor easier
 
 ---------------------------------------------------------------------------*/
+void setArms()
+{
+  
+}
+
+void Bot::riseLow()
+{
+  setArms();
+
+}
+
+void Bot::riseHigh()
+{
+  setArms();
+}
+
 void Bot::outtake()
 {
   double count = time(0);

@@ -20,8 +20,11 @@ class Bot
   private:
   GyroSensor gyroSensor;
   LineSensor lineSensor;
+  void setArms();
 
   public:
+  void riseLow();
+  void riseHigh();
   void outtake();
   void parabolicTurn(char, int);
 };
