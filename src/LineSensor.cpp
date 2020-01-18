@@ -32,7 +32,7 @@ LineSensor::LineSensor()
   tolerance = 100;
 }
 
-void LineSensor::CalibrateLineSensor()
+void LineSensor::CallibrateLineSensor()
 {
   //values to set to get an initial read of values
   leftAnalogCallibrated = LeftLineTracker.value(analogUnits::mV);
@@ -63,10 +63,10 @@ void LineSensor::moveWithCaution(int speed)
   for(int timeWait = time(0); timeWait <= stopper; timeWait = time(0))
   {
     this -> SetLineValues();
-    if((averageDetection > (white + (tolerance/2))) && (leftAnalog < (white + tolerance) || rightAnalog < (white + tolerance)))
-    {
-      return this -> fallBack();
-    }
+    //if((averageDetection > (white + (tolerance/2))) && (leftAnalog < (white + tolerance) || rightAnalog < (white + tolerance)))
+    //{
+    //  return this -> fallBack();
+    //}
   }
   LeftBackMotor.stop();
   LeftFrontMotor.stop();

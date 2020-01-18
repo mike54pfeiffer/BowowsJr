@@ -8,6 +8,7 @@ void GyroSensor::GyroTest()
   while(true){
   Brain.Screen.newLine();
   Brain.Screen.print(Gyro.value(rotationUnits::deg));
+  Brain.Screen.print("Gyro %f");
   }
 }
 

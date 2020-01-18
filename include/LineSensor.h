@@ -34,6 +34,7 @@ class LineSensor
     int leftAnalogCallibrated;
     int rightAnalogCallibrated;
     int averageDetectionCallibrated;
+    //color values
     int whiteValue;
     int darkValue;
     int blueValue;
@@ -45,7 +46,7 @@ class LineSensor
   public:
     //Public Member Functions
     LineSensor();
-    void CalibrateLineSensor();
+    void CallibrateLineSensor();
     void SetLineValues();
     void moveWithCaution(int);
     void LineTest();
