@@ -103,6 +103,16 @@ void Move(double Tiles, double Velocity, int Time, double Intake) {
   Timeout(Time);
   Conversion(Tiles);
 
+    if(Intake == 1){
+
+    LeftIntakeMotor.spin(vex::directionType::fwd, 90, vex::velocityUnits::pct);
+    RightIntakeMotor.spin(vex::directionType::rev, 90, vex::velocityUnits::pct);
+  }
+   else{
+    LeftIntakeMotor.stop(brakeType::hold);
+    RightIntakeMotor.stop(brakeType::hold);
+  }
+
   LeftFrontMotor.setVelocity(Velocity, vex::velocityUnits::pct);
   RightFrontMotor.setVelocity(Velocity, vex::velocityUnits::pct);
   LeftBackMotor.setVelocity(Velocity, vex::velocityUnits::pct);
@@ -113,17 +123,6 @@ void Move(double Tiles, double Velocity, int Time, double Intake) {
   LeftBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
   RightBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg );  
 
-  if(Intake == 1){
-    LeftIntakeMotor.setVelocity(Velocity, vex::velocityUnits::pct);
-    RightIntakeMotor.setVelocity(Velocity, vex::velocityUnits::pct);
-
-    LeftIntakeMotor.stop(brakeType::hold);
-    RightIntakeMotor.stop(brakeType::hold);
-  }
-  else{
-    LeftIntakeMotor.stop(brakeType::hold);
-    RightIntakeMotor.stop(brakeType::hold);
-  }
 
 }
 
@@ -149,6 +148,21 @@ void TiltMove(int Velocity, double Revolution) {
 
   LeftTiltMotor.stop(brakeType::hold);
   RightTiltMotor.stop(brakeType::hold);
+ 
+}
+
+void Intake(double Velocity, double Revolution, int time){
+  Timeout(time);
+
+    LeftIntakeMotor.setVelocity(Velocity, vex::velocityUnits::pct);
+    RightIntakeMotor.setVelocity(Velocity, vex::velocityUnits::pct);
+
+    LeftIntakeMotor.rotateFor(vex::directionType::rev, Revolution, vex::rotationUnits::rev, false);
+    RightIntakeMotor.rotateFor(vex::directionType::fwd, Revolution, vex::rotationUnits::rev);
+
+
+    LeftIntakeMotor.stop(brakeType::hold);
+    RightIntakeMotor.stop(brakeType::hold);
 
 }
 /*---------------------------------------------------------------------------
@@ -239,80 +253,185 @@ void pneumatics(){
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  enum Color{RED, BLUE, TEST};
-  Color side = BLUE;
+  enum Color{RED, BLUE, SKILLS, TEST};
+  Color side = RED;
   Bot test;
   GyroSensor GyroTurn;
   LineSensor lineTracker;
 
   if(side == BLUE)
   {
+    //wait for teammate to run set up
+    vex::task::sleep(3000);
     //move forward to 4 stack tower
-    Move(-1, 20, 5, 0);
+    Move(-1.1, 20, 5, 0);
     LeftFrontMotor.stop(vex::brakeType::hold);
     RightFrontMotor.stop(vex::brakeType::hold);
     LeftBackMotor.stop(vex::brakeType::hold);
     RightBackMotor.stop(vex::brakeType::hold);
-    //turn to face front toward tower
-    GyroTurn.GyroTurn(90, 25);
-    vex::task::sleep(250);
-    ArmMove(65,.2);
+    //turn to face back toward tower
+    GyroTurn.GyroTurn(94, 25);
     vex::task::sleep(100);
-    Move(.3,25,1, 1);
-    GyroTurn.GyroTurn(-20,30);
-    Move(.2,35,1, 0);
-    GyroTurn.GyroTurn(80,25);
+    //release intake system and push left side tower
+    ArmMove(100,-.3);
+    vex::task::sleep(100);
+    ArmMove(-85,.4);
+    vex::task::sleep(500);
+    //move back to line up cube to intake
+    Move(-.1,30, 1, 0);
+    vex::task::sleep(250);
+    //move forward to intake cube 
+    Move(.4,35,1, 1);
+    //move around tower to get a straight push into the 
+    GyroTurn.GyroTurn(-30,30);
+    Move(-.4,25,2, 0);
+    GyroTurn.GyroTurn(68,25);
     vex::task::sleep(150);
 
-    //first push into tower and then lower arms and intake top block
-    Move(-3, 50, 3, 0);
-    Move(1,50,2, 0);
+    //push into tower
+    Move(-0.75, 35, 3, 0);
+    Move(-3.5, 75, 2, 0);
+    //move out of score zone
+    Move(1,50, 2, 0);
+    //face middle tower
+    GyroTurn.GyroTurn(-95, 30);
+    //go to tower
+    Move(1, 30, 3, 0);
+    //move arms up
+    ArmMove(40, -1.3);
+    //score high
+    Intake(-80, 2 ,1);
+    //////////////////////////////
+    /*
+    //turn to face tower
+    GyroTurn.GyroTurn(64,35);
+    vex::task::sleep(100);
+    ArmMove(40, -1.2);
+    //move toward tower
+    Move(.1, 35, 2, 0);
+    //outtake cube to score high
+    Intake(-80, 2 ,1);
+    //move back
+    Move(-1, 50, 2, 0);
+    //move arms down
+    ArmMove(-20,1.2);
+    
+    
+    GyroTurn.GyroTurn(-50,25);
+    Move(0.5, 50, 2, 1);
+    Move(-0.5, 50, 2, 0);
+    GyroTurn.GyroTurn(-100,30);
+    ArmMove(40, -1.3);
+    Intake(-80, 2 ,1);
+    */
 
   }
          
   if(side == RED)
   {
+    //wait for teammate to run set up
+    vex::task::sleep(3000);
     //move forward to 4 stack tower
-    Move(-.7,40, 2, 0);
+    Move(-1.1, 20, 5, 0);
     LeftFrontMotor.stop(vex::brakeType::hold);
     RightFrontMotor.stop(vex::brakeType::hold);
     LeftBackMotor.stop(vex::brakeType::hold);
     RightBackMotor.stop(vex::brakeType::hold);
-
-    //turn to face front toward tower
-    GyroTurn.GyroTurn(15, 30);
+    //turn to face back toward tower
+    GyroTurn.GyroTurn(-94, 25);
+    vex::task::sleep(100);
+    //release intake system and push left side tower
+    ArmMove(100,-.3);
+    vex::task::sleep(100);
+    ArmMove(-85,.4);
+    vex::task::sleep(500);
+    //move back to line up cube to intake
+    Move(-.1,25, 1, 0);
     vex::task::sleep(250);
-    Move(-1,40,1, 1);
-    GyroTurn.GyroTurn(-180,30);
+    //move forward to intake cube 
+    Move(.4,40,1, 1);
+    //move around tower to get a straight push into the 
+    GyroTurn.GyroTurn(24,30);
+    Move(-.4,25,2, 0);
+    GyroTurn.GyroTurn(-73,25);
+    vex::task::sleep(150);
 
-    //first push into tower and then lower arms and intake top block
-    Move(-3, 30, 4, 0);
-    Move(.4,50,2, 0);
-/////////////////////////////////////////////////////////
-    //first turn to callibrate
-    GyroTurn.GyroTurn(-35, 25);
+    //push into tower
+    Move(-0.75, 35, 3, 0);
+    Move(-3.5, 70, 2, 0);
+    //move out of score zone
+    Move(1,50, 2, 0);
+
+    //face middle tower
+    GyroTurn.GyroTurn(95, 30);
+    //go to tower
+    Move(1, 30, 3, 0);
+    //move arms up
+    ArmMove(40, -1.3);
+    //score high
+    Intake(-80, 2 ,1);
+///////////////////////////////////////////
+    /*
+    //turn to face tower
+    GyroTurn.GyroTurn(-64,35);
+    vex::task::sleep(100);
+    //move arms up
+    ArmMove(40, -1.2);
+    //move toward tower
+    Move(.1, 35, 2, 0);
+    //release cube
+    Intake(-80, 2 ,1);
+    //move back
+    Move(-1, 50, 2, 0);
+    //move arms down
+    ArmMove(-20,1.2);
+    */
+/*
+    GyroTurn.GyroTurn(50,25);
+    Move(0.5, 50, 2, 1);
+    Move(-0.5, 50, 2, 0);
+    GyroTurn.GyroTurn(100,30);
+    ArmMove(40, -1.3);
+    Intake(-80, 2 ,1);
+    */
+  }
+
+  if(side == SKILLS)
+  {
+    //push intake away
+    Move(0.2, 25, 5, 0);
+    Move(-0.2, 35, 5, 0);
+    vex::task::sleep(500);
+    //release arm system
+    ArmMove(100,-.3);
+    vex::task::sleep(100);
+    ArmMove(-85,.4);
     vex::task::sleep(250);
-
-    //second push into tower
-    Move(-0.5, 30, 2, 0);
-
-    //second turn to callibrate
-    GyroTurn.GyroTurn(30, 25);
-    vex::task::sleep(250);
-
-    //third push into tower into score
-    Move(-1.7, 35, 2, 0);
-    vex::task::sleep(250);
-
-    //back up
-    Move(0.75, 90, 2, 0);
-    vex::task::sleep(250);
+    //move to tower and intake
+    Move(0.5, 20, 5, 1);
+    Move(0.6, 35, 5, 0);
+    vex::task::sleep(250);//a little to the left on blue side, fix it!
+    //move arms up
+    ArmMove(40, -1.2);
+    //score high
+    Intake(-80, 2 ,1);
+    //lower arms
+    ArmMove(-40, -1.2);
+    LeftArmMotor.stop(vex::brakeType::coast);
+    RightArmMotor.stop(vex::brakeType::coast);
+    //turn to face block chunk
+    GyroTurn.GyroTurn(-20, 25);
+    //push chunk into corner to score
+    Move(-2, 75, 5, 0);
+    Move(0.5, 25, 5, 0);
+    Move(-1, 75, 5, 0);
   }
 
   if(side == TEST)
   {
     GyroSensor gy;
-    gy.GyroTest();
+    gy.GyroTurn(90, 25);
+    gy.GyroTurn(-90, 25);
   }
 }
 
