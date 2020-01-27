@@ -15,14 +15,13 @@
 #include "LineSensor.h"
 #include "GyroSensor.h"
 
-class Bot
+struct Bot
 {
-  private:
+  public:
   GyroSensor gyroSensor;
   LineSensor lineSensor;
-  void setArms();
 
-  public:
+  void setArms();
   void riseLow();
   void riseHigh();
   void outtake();

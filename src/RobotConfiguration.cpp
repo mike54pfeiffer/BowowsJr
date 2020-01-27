@@ -8,8 +8,8 @@
 
 brain Brain = brain();
 controller Controller1 = controller();
-motor RightIntakeMotor = motor(vex::PORT20, vex::gearSetting::ratio18_1,false);
-motor LeftIntakeMotor = motor(vex::PORT10, vex::gearSetting::ratio18_1,false);
+motor RightIntakeMotor = motor(vex::PORT19, vex::gearSetting::ratio18_1,false);
+motor LeftIntakeMotor = motor(vex::PORT9, vex::gearSetting::ratio18_1,false);
 motor RightBackMotor = motor(vex::PORT13, vex::gearSetting::ratio18_1,true);
 motor LeftBackMotor = motor(vex::PORT3, vex::gearSetting::ratio18_1,false);
 motor RightFrontMotor = motor(vex::PORT14, vex::gearSetting::ratio18_1,true);

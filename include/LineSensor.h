@@ -42,13 +42,14 @@ class LineSensor
     int tolerance;
     //Private Member Functions
     void fallBack();
-    
+    bool toleranceCheck(char, int);
   public:
     //Public Member Functions
     LineSensor();
     void CallibrateLineSensor();
     void SetLineValues();
     void moveWithCaution(int);
+    void LineStraight(float);
     void LineTest();
 };
 

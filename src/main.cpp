@@ -14,6 +14,7 @@
 #include "vex.h"
 #include "RobotConfiguration.h"
 #include "Bot.h"
+#include "VisionSensor.h"
 
 double DriveGearDifference = 1; // The gear ratio is of 2.6 meaning a gear
                                   // reduction (3 - 2) (18 - 12) sprockets
@@ -126,8 +127,8 @@ void Move(double Tiles, double Velocity, int Time, double Intake) {
 
 }
 
-void ArmMove(int Velocity, double Revolution) {
-
+void ArmMove(int Velocity, double Revolution, int time) {
+  Timeout(time);
   LeftArmMotor.setVelocity(Velocity,vex::velocityUnits::pct);
   RightArmMotor.setVelocity(Velocity,vex::velocityUnits::pct);
 
@@ -138,8 +139,8 @@ void ArmMove(int Velocity, double Revolution) {
   RightArmMotor.stop(brakeType::hold);
 
 }
-void TiltMove(int Velocity, double Revolution) {
-
+void TiltMove(int Velocity, double Revolution, int time) {
+  Timeout(time);
   LeftTiltMotor.setVelocity(Velocity,vex::velocityUnits::pct);
   RightTiltMotor.setVelocity(Velocity,vex::velocityUnits::pct);
 
@@ -254,10 +255,14 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{RED, BLUE, SKILLS, TEST};
-  Color side = RED;
+  Color side = TEST;
+
   Bot test;
   GyroSensor GyroTurn;
   LineSensor lineTracker;
+
+  LeftArmMotor.resetRotation();
+  RightArmMotor.resetRotation();
 
   if(side == BLUE)
   {
@@ -273,9 +278,9 @@ void autonomous(void) {
     GyroTurn.GyroTurn(94, 25);
     vex::task::sleep(100);
     //release intake system and push left side tower
-    ArmMove(100,-.3);
+    ArmMove(100,-.3, 2);
     vex::task::sleep(100);
-    ArmMove(-85,.4);
+    ArmMove(-85,.4, 2);
     vex::task::sleep(500);
     //move back to line up cube to intake
     Move(-.1,30, 1, 0);
@@ -289,8 +294,9 @@ void autonomous(void) {
     vex::task::sleep(150);
 
     //push into tower
-    Move(-0.75, 35, 3, 0);
-    Move(-3.5, 75, 2, 0);
+    Move(-0.3, 80, 2, 0);
+    vex::task::sleep(500);
+    Move(-4, 75, 2, 0);
     //move out of score zone
     Move(1,50, 2, 0);
     //face middle tower
@@ -298,7 +304,7 @@ void autonomous(void) {
     //go to tower
     Move(1, 30, 3, 0);
     //move arms up
-    ArmMove(40, -1.3);
+    ArmMove(40, -1.3, 3);
     //score high
     Intake(-80, 2 ,1);
     //////////////////////////////
@@ -341,9 +347,9 @@ void autonomous(void) {
     GyroTurn.GyroTurn(-94, 25);
     vex::task::sleep(100);
     //release intake system and push left side tower
-    ArmMove(100,-.3);
+    ArmMove(100,-.3, 2);
     vex::task::sleep(100);
-    ArmMove(-85,.4);
+    ArmMove(-85,.4, 2);
     vex::task::sleep(500);
     //move back to line up cube to intake
     Move(-.1,25, 1, 0);
@@ -357,8 +363,9 @@ void autonomous(void) {
     vex::task::sleep(150);
 
     //push into tower
-    Move(-0.75, 35, 3, 0);
-    Move(-3.5, 70, 2, 0);
+    Move(-0.3, 80, 2, 0);
+    vex::task::sleep(500);
+    Move(-4, 75, 2, 0);
     //move out of score zone
     Move(1,50, 2, 0);
 
@@ -367,7 +374,7 @@ void autonomous(void) {
     //go to tower
     Move(1, 30, 3, 0);
     //move arms up
-    ArmMove(40, -1.3);
+    ArmMove(40, -1.3, 3);
     //score high
     Intake(-80, 2 ,1);
 ///////////////////////////////////////////
@@ -403,20 +410,20 @@ void autonomous(void) {
     Move(-0.2, 35, 5, 0);
     vex::task::sleep(500);
     //release arm system
-    ArmMove(100,-.3);
+    ArmMove(100,-.3, 3);
     vex::task::sleep(100);
-    ArmMove(-85,.4);
+    ArmMove(-85,.4, 3);
     vex::task::sleep(250);
     //move to tower and intake
     Move(0.5, 20, 5, 1);
     Move(0.6, 35, 5, 0);
     vex::task::sleep(250);//a little to the left on blue side, fix it!
     //move arms up
-    ArmMove(40, -1.2);
+    ArmMove(40, -1.2, 3);
     //score high
     Intake(-80, 2 ,1);
     //lower arms
-    ArmMove(-40, -1.2);
+    ArmMove(-40, -1.2, 3);
     LeftArmMotor.stop(vex::brakeType::coast);
     RightArmMotor.stop(vex::brakeType::coast);
     //turn to face block chunk
@@ -429,10 +436,64 @@ void autonomous(void) {
 
   if(side == TEST)
   {
-    GyroSensor gy;
-    gy.GyroTurn(90, 25);
-    gy.GyroTurn(-90, 25);
-  }
+    VisionSensor.setWifiMode(vex::vision::wifiMode::off);
+    while(1)
+    {
+      VisionSensor.takeSnapshot(1);
+      if (VisionSensor.largestObject.exists && VisionSensor.largestObject.width > 5)
+      {
+        Brain.Screen.setPenColor(vex::color::white);
+        Brain.Screen.setFillColor(vex::color::green);
+        Brain.Screen.drawRectangle(0,0, 480, 240);
+        Brain.Screen.setCursor(2,6);
+        Brain.Screen.setFont(vex::fontType::mono40);
+        Brain.Screen.print("Forward");
+        LeftFrontMotor.spin(vex::directionType::fwd, 25, vex::velocityUnits::pct);
+        LeftBackMotor.spin(vex::directionType::rev, 25, vex::velocityUnits::pct);
+        RightFrontMotor.spin(vex::directionType::fwd, 25, vex::velocityUnits::pct);
+        RightBackMotor.spin(vex::directionType::rev, 25, vex::velocityUnits::pct);
+      }
+      else
+      {
+        VisionSensor.takeSnapshot(2);
+        if (VisionSensor.largestObject.exists && VisionSensor.largestObject.width > 5)
+        {
+          Brain.Screen.setPenColor(vex::color::black);
+          Brain.Screen.setFillColor(vex::color::yellow);
+          Brain.Screen.drawRectangle(0,0, 480, 240);
+          Brain.Screen.setCursor(2,6);
+          Brain.Screen.setFont(vex::fontType::mono40);
+          Brain.Screen.print("Right");
+          LeftFrontMotor.spin(vex::directionType::fwd, 25, vex::velocityUnits::pct);
+          LeftBackMotor.spin(vex::directionType::rev, 25, vex::velocityUnits::pct);
+        }
+        else 
+        {
+          VisionSensor.takeSnapshot(3);
+          if (VisionSensor.largestObject.exists && VisionSensor.largestObject.width>5)
+          {
+            Brain.Screen.setPenColor(vex::color::white);
+            Brain.Screen.setFillColor(vex::color::red);
+            Brain.Screen.drawRectangle(0,0, 480, 240);
+            Brain.Screen.setCursor(2,6);
+            Brain.Screen.setFont(vex::fontType::mono40);
+            Brain.Screen.print("Left");
+            RightFrontMotor.spin(vex::directionType::fwd, 25, vex::velocityUnits::pct);
+            RightBackMotor.spin(vex::directionType::rev, 25, vex::velocityUnits::pct);
+          }
+          else 
+          {
+            LeftFrontMotor.stop();
+            LeftBackMotor.stop();
+            RightFrontMotor.stop();
+            RightBackMotor.stop();
+            Brain.Screen.clearScreen();
+          }
+        }
+      } 
+      task::sleep(100);
+    }
+  } //End TEST
 }
 
 /*---------------------------------------------------------------------------//
@@ -466,6 +527,11 @@ void TankDrive() {
 
 void usercontrol(void) {
   // User control code here, inside the loop
+  LeftArmMotor.resetRotation();
+  RightArmMotor.resetRotation();
+  bool lowTowerTask = false;
+  bool midTowerTask = false;
+  bool highTowerTask = false;
   while (1) {
     //TankDrive();
     LeftBackMotor.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
@@ -506,20 +572,58 @@ void usercontrol(void) {
       LeftArmMotor.stop(vex::brakeType::hold);
     }
     // arm motor;
-      if(Controller1.ButtonA.pressing()){
-      //arms go up to score on the lower towers
-        ArmMove(40, -1.2);
-        LeftArmMotor.stop(vex::brakeType::hold);
-        RightArmMotor.stop(vex::brakeType::hold);
+      if(Controller1.ButtonA.pressing() || lowTowerTask)
+      {
+        lowTowerTask = true;
+        midTowerTask = false;
+        highTowerTask = false;
+        //arms go up to score on the lower towers
+        if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.1 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.1)
+        {
+          LeftArmMotor.spin(vex::directionType::fwd, -40, vex::velocityUnits::pct);
+          RightArmMotor.spin(vex::directionType::rev, -40, vex::velocityUnits::pct);
+        }
+        else if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.1 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.1)
+        {
+          LeftArmMotor.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
+          RightArmMotor.spin(vex::directionType::rev, 40, vex::velocityUnits::pct);
+        }
+        else
+        {
+          lowTowerTask = false;
+          LeftArmMotor.stop(vex::brakeType::hold);
+          RightArmMotor.stop(vex::brakeType::hold);
+        }
       }
-      if(Controller1.ButtonB.pressing()){
-        //arms go up to score on the higher towers
-        ArmMove(40, -1.3);
-        LeftArmMotor.stop(vex::brakeType::hold);
-        RightArmMotor.stop(vex::brakeType::hold);
+      if(Controller1.ButtonB.pressing() || midTowerTask)
+      {
+        lowTowerTask = false;
+        midTowerTask = true;
+        highTowerTask = false;
+        //arms go up to score on the lower towers
+        if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.3 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.3)
+        {
+          LeftArmMotor.spin(vex::directionType::fwd, -40, vex::velocityUnits::pct);
+          RightArmMotor.spin(vex::directionType::rev, -40, vex::velocityUnits::pct);
+        }
+        else if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.3 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.3)
+        {
+          LeftArmMotor.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
+          RightArmMotor.spin(vex::directionType::rev, 40, vex::velocityUnits::pct);
+        }
+        else
+        {
+          midTowerTask = false;
+          LeftArmMotor.stop(vex::brakeType::hold);
+          RightArmMotor.stop(vex::brakeType::hold);
+        }
       }
       if(Controller1.ButtonX.pressing()){
-        task::stopAll();
+        lowTowerTask = false;
+        midTowerTask = false;
+        highTowerTask = false;
+        RightArmMotor.stop(vex::brakeType::hold);
+        LeftArmMotor.stop(vex::brakeType::hold);
         }
     vex::task::sleep(20); // Sleep the task for a short amount of time to
                           // prevent wasted resources.
