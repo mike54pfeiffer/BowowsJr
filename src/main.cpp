@@ -219,6 +219,16 @@ void TurnRight(double Tiles, double Velocity, double Time) {
   //RightIntakeMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg);
 }
 
+bool ArmIsAt(double rotationValue, int Time)
+{
+  Timeout(Time);
+  if(LeftArmMotor.rotation(vex::rotationUnits::rev) == rotationValue && RightArmMotor.rotation(vex::rotationUnits::rev)  == rotationValue)
+  {
+    return true;
+  }
+  return false;
+}
+
 /*---------------------------------------------------------------------------
   Ultrasonic RangeFinder/Sonar
 
@@ -255,7 +265,7 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{RED, BLUE, SKILLS, TEST};
-  Color side = TEST;
+  Color side = SKILLS;
 
   Bot test;
   GyroSensor GyroTurn;
@@ -405,33 +415,45 @@ void autonomous(void) {
 
   if(side == SKILLS)
   {
-    //push intake away
-    Move(0.2, 25, 5, 0);
-    Move(-0.2, 35, 5, 0);
-    vex::task::sleep(500);
-    //release arm system
-    ArmMove(100,-.3, 3);
+    //set arm motor encoders
+    LeftArmMotor.resetRotation();
+    RightArmMotor.resetRotation();
+    //setup to takeout arms
+    ArmMove(100,-.5, 2);
     vex::task::sleep(100);
-    ArmMove(-85,.4, 3);
-    vex::task::sleep(250);
-    //move to tower and intake
-    Move(0.5, 20, 5, 1);
-    Move(0.6, 35, 5, 0);
-    vex::task::sleep(250);//a little to the left on blue side, fix it!
-    //move arms up
-    ArmMove(40, -1.2, 3);
+    LeftArmMotor.stop(vex::brakeType(coast));
+    RightArmMotor.stop(vex::brakeType(coast));
+    vex::task::sleep(500);
+    //intake
+    Intake(80, 2 ,1);
+    //move arms up to tower
+    while(!ArmIsAt(-0.8, 3))
+    {
+      LeftArmMotor.spin(vex::directionType::fwd, -40, vex::velocityUnits::pct);
+      RightArmMotor.spin(vex::directionType::rev, -40, vex::velocityUnits::pct);
+    }
+    LeftArmMotor.stop(vex::brakeType(hold));
+    RightArmMotor.stop(vex::brakeType(hold));
+    vex::task::sleep(100);
+    //move forward
+    Move(0.1, 30, 2, 0);
     //score high
+    vex::task::sleep(100);
     Intake(-80, 2 ,1);
-    //lower arms
-    ArmMove(-40, -1.2, 3);
-    LeftArmMotor.stop(vex::brakeType::coast);
-    RightArmMotor.stop(vex::brakeType::coast);
-    //turn to face block chunk
-    GyroTurn.GyroTurn(-20, 25);
-    //push chunk into corner to score
-    Move(-2, 75, 5, 0);
-    Move(0.5, 25, 5, 0);
-    Move(-1, 75, 5, 0);
+    //back up to wall
+
+    Move(-0.2, 30, 2, 0);
+    //move arms back down
+    while(!ArmIsAt(0, 3))
+    {
+      LeftArmMotor.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
+      RightArmMotor.spin(vex::directionType::rev, 40, vex::velocityUnits::pct);
+    }
+    //intake front cube
+    Move(0.2, 30, 2, 1);
+    //move forward
+    Move(0.05, 30, 2, 0);
+    //turn right to start going toward tower
   }
 
   if(side == TEST)
@@ -580,16 +602,19 @@ void usercontrol(void) {
         //arms go up to score on the lower towers
         if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.1 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.1)
         {
+          //position arms up
           LeftArmMotor.spin(vex::directionType::fwd, -40, vex::velocityUnits::pct);
           RightArmMotor.spin(vex::directionType::rev, -40, vex::velocityUnits::pct);
         }
-        else if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.1 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.1)
+        else if(LeftArmMotor.rotation(vex::rotationUnits::rev) < -1.1 && RightArmMotor.rotation(vex::rotationUnits::rev)  < -1.1)
         {
+          //position arms down
           LeftArmMotor.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
           RightArmMotor.spin(vex::directionType::rev, 40, vex::velocityUnits::pct);
         }
         else
         {
+          //condiition satisfied
           lowTowerTask = false;
           LeftArmMotor.stop(vex::brakeType::hold);
           RightArmMotor.stop(vex::brakeType::hold);
@@ -603,28 +628,36 @@ void usercontrol(void) {
         //arms go up to score on the lower towers
         if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.3 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.3)
         {
+          //position arms up
           LeftArmMotor.spin(vex::directionType::fwd, -40, vex::velocityUnits::pct);
           RightArmMotor.spin(vex::directionType::rev, -40, vex::velocityUnits::pct);
         }
-        else if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.3 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.3)
+        else if(LeftArmMotor.rotation(vex::rotationUnits::rev) < -1.3 && RightArmMotor.rotation(vex::rotationUnits::rev)  < -1.3)
         {
+          //position arms down
           LeftArmMotor.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
           RightArmMotor.spin(vex::directionType::rev, 40, vex::velocityUnits::pct);
         }
         else
         {
+          //condition satisfied
           midTowerTask = false;
           LeftArmMotor.stop(vex::brakeType::hold);
           RightArmMotor.stop(vex::brakeType::hold);
         }
       }
-      if(Controller1.ButtonX.pressing()){
+      if(Controller1.ButtonX.pressing())
+      {
         lowTowerTask = false;
         midTowerTask = false;
         highTowerTask = false;
         RightArmMotor.stop(vex::brakeType::hold);
         LeftArmMotor.stop(vex::brakeType::hold);
-        }
+      }
+      if(Controller1.ButtonY.pressing())
+      {
+
+      }
     vex::task::sleep(20); // Sleep the task for a short amount of time to
                           // prevent wasted resources.
   }
