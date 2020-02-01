@@ -104,8 +104,8 @@ void Move(double Tiles, double Velocity, int Time, double Intake) {
   Timeout(Time);
   Conversion(Tiles);
 
-    if(Intake == 1){
-
+  if(Intake == 1)
+  {
     LeftIntakeMotor.spin(vex::directionType::fwd, 90, vex::velocityUnits::pct);
     RightIntakeMotor.spin(vex::directionType::rev, 90, vex::velocityUnits::pct);
   }
@@ -124,6 +124,8 @@ void Move(double Tiles, double Velocity, int Time, double Intake) {
   LeftBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
   RightBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg );  
 
+  RightIntakeMotor.stop(vex::brakeType(hold));
+  LeftIntakeMotor.stop(vex::brakeType(hold));
 
 }
 
@@ -203,7 +205,7 @@ void TurnRight(double Tiles, double Velocity, double Time) {
   Timeout(Time);
 
   Conversion(Tiles);
-
+  
   LeftFrontMotor.setVelocity(Velocity, vex::velocityUnits::pct);
   RightFrontMotor.setVelocity(Velocity, vex::velocityUnits::pct);
   LeftBackMotor.setVelocity(Velocity, vex::velocityUnits::pct);
@@ -268,8 +270,13 @@ void autonomous(void) {
   Color side = SKILLS;
 
   Bot test;
-  GyroSensor GyroTurn;
+  GyroSensor Gyroscope;
   LineSensor lineTracker;
+  std::ofstream outFile;
+  std::ifstream inFile;
+
+  LeftArmMotor.setMaxTorque(100, percentUnits::pct);
+  RightArmMotor.setMaxTorque(100, percentUnits::pct);
 
   LeftArmMotor.resetRotation();
   RightArmMotor.resetRotation();
@@ -285,7 +292,7 @@ void autonomous(void) {
     LeftBackMotor.stop(vex::brakeType::hold);
     RightBackMotor.stop(vex::brakeType::hold);
     //turn to face back toward tower
-    GyroTurn.GyroTurn(94, 25);
+    Gyroscope.GyroTurn(94, 25);
     vex::task::sleep(100);
     //release intake system and push left side tower
     ArmMove(100,-.3, 2);
@@ -298,9 +305,9 @@ void autonomous(void) {
     //move forward to intake cube 
     Move(.4,35,1, 1);
     //move around tower to get a straight push into the 
-    GyroTurn.GyroTurn(-30,30);
+    Gyroscope.GyroTurn(-30,30);
     Move(-.4,25,2, 0);
-    GyroTurn.GyroTurn(68,25);
+    Gyroscope.GyroTurn(68,25);
     vex::task::sleep(150);
 
     //push into tower
@@ -310,7 +317,7 @@ void autonomous(void) {
     //move out of score zone
     Move(1,50, 2, 0);
     //face middle tower
-    GyroTurn.GyroTurn(-95, 30);
+    Gyroscope.GyroTurn(-95, 30);
     //go to tower
     Move(1, 30, 3, 0);
     //move arms up
@@ -320,7 +327,7 @@ void autonomous(void) {
     //////////////////////////////
     /*
     //turn to face tower
-    GyroTurn.GyroTurn(64,35);
+    Gyroscope.GyroTurn(64,35);
     vex::task::sleep(100);
     ArmMove(40, -1.2);
     //move toward tower
@@ -333,10 +340,10 @@ void autonomous(void) {
     ArmMove(-20,1.2);
     
     
-    GyroTurn.GyroTurn(-50,25);
+    Gyroscope.GyroTurn(-50,25);
     Move(0.5, 50, 2, 1);
     Move(-0.5, 50, 2, 0);
-    GyroTurn.GyroTurn(-100,30);
+    Gyroscope.GyroTurn(-100,30);
     ArmMove(40, -1.3);
     Intake(-80, 2 ,1);
     */
@@ -354,7 +361,7 @@ void autonomous(void) {
     LeftBackMotor.stop(vex::brakeType::hold);
     RightBackMotor.stop(vex::brakeType::hold);
     //turn to face back toward tower
-    GyroTurn.GyroTurn(-94, 25);
+    Gyroscope.GyroTurn(-94, 25);
     vex::task::sleep(100);
     //release intake system and push left side tower
     ArmMove(100,-.3, 2);
@@ -367,9 +374,9 @@ void autonomous(void) {
     //move forward to intake cube 
     Move(.4,40,1, 1);
     //move around tower to get a straight push into the 
-    GyroTurn.GyroTurn(24,30);
+    Gyroscope.GyroTurn(24,30);
     Move(-.4,25,2, 0);
-    GyroTurn.GyroTurn(-73,25);
+    Gyroscope.GyroTurn(-73,25);
     vex::task::sleep(150);
 
     //push into tower
@@ -380,7 +387,7 @@ void autonomous(void) {
     Move(1,50, 2, 0);
 
     //face middle tower
-    GyroTurn.GyroTurn(95, 30);
+    Gyroscope.GyroTurn(95, 30);
     //go to tower
     Move(1, 30, 3, 0);
     //move arms up
@@ -390,7 +397,7 @@ void autonomous(void) {
 ///////////////////////////////////////////
     /*
     //turn to face tower
-    GyroTurn.GyroTurn(-64,35);
+    Gyroscope.GyroTurn(-64,35);
     vex::task::sleep(100);
     //move arms up
     ArmMove(40, -1.2);
@@ -404,10 +411,10 @@ void autonomous(void) {
     ArmMove(-20,1.2);
     */
 /*
-    GyroTurn.GyroTurn(50,25);
+    Gyroscope.GyroTurn(50,25);
     Move(0.5, 50, 2, 1);
     Move(-0.5, 50, 2, 0);
-    GyroTurn.GyroTurn(100,30);
+    Gyroscope.GyroTurn(100,30);
     ArmMove(40, -1.3);
     Intake(-80, 2 ,1);
     */
@@ -419,45 +426,74 @@ void autonomous(void) {
     LeftArmMotor.resetRotation();
     RightArmMotor.resetRotation();
     //setup to takeout arms
-    ArmMove(100,-.5, 2);
+    ArmMove(100, -0.5, 2);
     vex::task::sleep(100);
     LeftArmMotor.stop(vex::brakeType(coast));
     RightArmMotor.stop(vex::brakeType(coast));
+    vex::task::sleep(250);
+    Move(-.1,40,2,1);
+    vex::task::sleep(100);
+    ArmMove(90, 0.4, 2);
+    vex::task::sleep(250);
+    Move(.05,40,2,1);
+    ArmMove(90,0.1, 2);
+    vex::task::sleep(100);
+    //intake cube
+    Intake(80, -3 ,1);
+    Move(0.1, 40, 2, 1);
     vex::task::sleep(500);
-    //intake
-    Intake(80, 2 ,1);
+    //realign with wall
+    Move(-0.15, 25, 2, 0);
     //move arms up to tower
-    while(!ArmIsAt(-0.8, 3))
-    {
-      LeftArmMotor.spin(vex::directionType::fwd, -40, vex::velocityUnits::pct);
-      RightArmMotor.spin(vex::directionType::rev, -40, vex::velocityUnits::pct);
-    }
+    ArmMove(40, -1.4, 3);
     LeftArmMotor.stop(vex::brakeType(hold));
     RightArmMotor.stop(vex::brakeType(hold));
-    vex::task::sleep(100);
+    vex::task::sleep(250);
     //move forward
     Move(0.1, 30, 2, 0);
     //score high
     vex::task::sleep(100);
-    Intake(-80, 2 ,1);
+    Intake(-80, 3 ,1);
     //back up to wall
-
     Move(-0.2, 30, 2, 0);
-    //move arms back down
-    while(!ArmIsAt(0, 3))
-    {
-      LeftArmMotor.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
-      RightArmMotor.spin(vex::directionType::rev, 40, vex::velocityUnits::pct);
-    }
-    //intake front cube
-    Move(0.2, 30, 2, 1);
-    //move forward
-    Move(0.05, 30, 2, 0);
-    //turn right to start going toward tower
+    //turn to gather preload
+    vex::task::sleep(100);
+    Gyroscope.GyroTurn(60, 30);
+    //slowly lower arms
+    ArmMove(50, 1, 2);
+    LeftArmMotor.stop(vex::brakeType(coast));
+    RightArmMotor.stop(vex::brakeType(coast));
+    vex::task::sleep(500);
+    //intake preload cube
+    Move(0.9, 40, 2, 1);
+    //turn to tower
+    Gyroscope.GyroTurn(-60, 30);
+    //realign with back wall
+    Move(-0.4, 50, 3, 0);
+    //move to second tower
+    Move(1.05, 50, 3, 1);
+    //lift arms up
+    ArmMove(80, -1.1, 2);
+    vex::task::sleep(250);
+    //score high
+    Intake(-80, 3 ,1);
   }
 
   if(side == TEST)
   {
+    LightSensor lightsensor;
+
+    lightsensor.LightTest();
+
+    /*if(Brain.SDcard.isInserted())
+    {
+      outFile.open("Data_Logging.txt", std::ofstream::out);
+      
+      outFile.close();
+    }
+    */
+
+    /*
     VisionSensor.setWifiMode(vex::vision::wifiMode::off);
     while(1)
     {
@@ -515,7 +551,9 @@ void autonomous(void) {
       } 
       task::sleep(100);
     }
+    */
   } //End TEST
+  
 }
 
 /*---------------------------------------------------------------------------//
@@ -551,9 +589,14 @@ void usercontrol(void) {
   // User control code here, inside the loop
   LeftArmMotor.resetRotation();
   RightArmMotor.resetRotation();
+
+  LeftArmMotor.setMaxTorque(100, percentUnits::pct);
+  RightArmMotor.setMaxTorque(100, percentUnits::pct);
+
   bool lowTowerTask = false;
   bool midTowerTask = false;
   bool highTowerTask = false;
+
   while (1) {
     //TankDrive();
     LeftBackMotor.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
@@ -626,7 +669,7 @@ void usercontrol(void) {
         midTowerTask = true;
         highTowerTask = false;
         //arms go up to score on the lower towers
-        if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.3 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.3)
+        if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.2 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.2)
         {
           //position arms up
           LeftArmMotor.spin(vex::directionType::fwd, -40, vex::velocityUnits::pct);

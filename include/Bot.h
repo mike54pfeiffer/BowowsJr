@@ -14,6 +14,7 @@
 #include "vex.h"
 #include "LineSensor.h"
 #include "GyroSensor.h"
+#include "LightSensor.h"
 
 struct Bot
 {

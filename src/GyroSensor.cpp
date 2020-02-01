@@ -10,9 +10,9 @@ void GyroSensor::GyroTest()
   while(true)
   {
     //print the gyro value of degrees rotated to the brain
-    Brain.Screen.newLine();
-    Brain.Screen.print(Gyro.value(rotationUnits::deg));
-    Brain.Screen.print("Gyro %f");
+    Brain.Screen.clearScreen();
+    Brain.Screen.printAt(100, 100, "Gyro %f", Gyro.value(rotationUnits::deg));
+    vex::task::sleep(500);
   }
 }
 

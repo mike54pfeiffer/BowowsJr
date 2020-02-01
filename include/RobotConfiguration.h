@@ -27,5 +27,6 @@ extern gyro Gyro;
 extern line RightLineTracker;
 extern line LeftLineTracker;
 extern digital_out leftpiston;
+extern light LightReader;
 
 #endif

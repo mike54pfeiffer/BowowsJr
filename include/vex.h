@@ -17,6 +17,8 @@
 #include <math.h>
 #include <ctime>
 #include <iomanip>
+#include <fstream>
+#include <iostream>
 
 //Vex Coding Studio Libraries
 #include "v5.h"
