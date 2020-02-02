@@ -267,7 +267,7 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{RED, BLUE, SKILLS, TEST};
-  Color side = SKILLS;
+  Color side = TEST;
 
   Bot test;
   GyroSensor Gyroscope;
@@ -309,11 +309,8 @@ void autonomous(void) {
     Move(-.4,25,2, 0);
     Gyroscope.GyroTurn(68,25);
     vex::task::sleep(150);
-
-    //push into tower
-    Move(-0.3, 80, 2, 0);
-    vex::task::sleep(500);
-    Move(-4, 75, 2, 0);
+    Move(-2, 30, 2, 0);
+    Move(-2, 75, 2, 0);
     //move out of score zone
     Move(1,50, 2, 0);
     //face middle tower
@@ -379,10 +376,9 @@ void autonomous(void) {
     Gyroscope.GyroTurn(-73,25);
     vex::task::sleep(150);
 
-    //push into tower
-    Move(-0.3, 80, 2, 0);
-    vex::task::sleep(500);
-    Move(-4, 75, 2, 0);
+    //push into corner
+    Move(-2, 30, 2 , 0);
+    Move(-2, 75, 2, 0);
     //move out of score zone
     Move(1,50, 2, 0);
 
@@ -471,7 +467,7 @@ void autonomous(void) {
     //realign with back wall
     Move(-0.4, 50, 3, 0);
     //move to second tower
-    Move(1.05, 50, 3, 1);
+    Move(1.1, 50, 3, 1);
     //lift arms up
     ArmMove(80, -1.1, 2);
     vex::task::sleep(250);
@@ -622,8 +618,8 @@ void usercontrol(void) {
       }
       if(Controller1.ButtonR1.pressing()){
       //arm system down
-        LeftArmMotor.spin(vex::directionType::fwd, 35, vex::velocityUnits::pct);
-        RightArmMotor.spin(vex::directionType::rev, 35, vex::velocityUnits::pct);
+        LeftArmMotor.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
+        RightArmMotor.spin(vex::directionType::rev, 80, vex::velocityUnits::pct);
     
       }
       else if(Controller1.ButtonL1.pressing()){
