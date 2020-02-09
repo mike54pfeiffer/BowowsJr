@@ -14,9 +14,13 @@
 class LightSensor
 {
   private:
+    int lightValueWithBlock;
     int lightValue;
   public:
+    LightSensor();
+    void Callibrate();
     void LightTest();
+    bool blockIsIn(int = 750);
 };
 
 #endif

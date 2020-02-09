@@ -267,14 +267,13 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{RED, BLUE, SKILLS, TEST};
-  Color side = TEST;
+  Color side = SKILLS;
 
   Bot test;
   GyroSensor Gyroscope;
   LineSensor lineTracker;
   std::ofstream outFile;
   std::ifstream inFile;
-
   LeftArmMotor.setMaxTorque(100, percentUnits::pct);
   RightArmMotor.setMaxTorque(100, percentUnits::pct);
 
@@ -460,26 +459,62 @@ void autonomous(void) {
     LeftArmMotor.stop(vex::brakeType(coast));
     RightArmMotor.stop(vex::brakeType(coast));
     vex::task::sleep(500);
-    //intake preload cube
+    //intake cube
     Move(0.9, 40, 2, 1);
     //turn to tower
     Gyroscope.GyroTurn(-60, 30);
     //realign with back wall
-    Move(-0.4, 50, 3, 0);
+    Move(-0.45, 50, 3, 0);
+    vex::task::sleep(250);
     //move to second tower
-    Move(1.1, 50, 3, 1);
+    Move(1.2, 50, 3, 1);
+    vex::task::sleep(250);
+    Move(-0.1, 50, 2, 0);
+    vex::task::sleep(250);
     //lift arms up
     ArmMove(80, -1.1, 2);
     vex::task::sleep(250);
     //score high
     Intake(-80, 3 ,1);
+    //lower arms
+    ArmMove(80, 1, 2);
+    LeftArmMotor.stop(vex::brakeType(coast));
+    RightArmMotor.stop(vex::brakeType(coast));
+    vex::task::sleep(250);
+    //intake cube
+    Move(-0.1, 50, 2, 1);
+    vex::task::sleep(250);
+    Move(0.1, 15, 2, 1);
+    vex::task::sleep(100);
+    Intake(80, -2 , 1);
+    //move back to line up cube push
+    Move(-0.4, 50, 2, 0);
+    //turn to face cube
+    Gyroscope.GyroTurn(-25, 30);
+    //push cube into score zone
+    Move(-0.7, 80, 2, 0);
+    vex::task::sleep(250);
+    //move out of score zone
+    Move(0.3, 40, 2, 0);
+    //turn and realign with wall
+    Gyroscope.GyroTurn(30, 30);
+    Move(-0.4, 40, 2, 0);
+    //move forward and turn
+    Move(0.3, 40, 2, 0);
+    Gyroscope.GyroTurn(-25, 30);
+    Move(2, 40, 2, 0);
   }
 
   if(side == TEST)
   {
-    LightSensor lightsensor;
-
-    lightsensor.LightTest();
+    LightSensor lighter;
+    Move(1, 30, 3, 1);
+    while(!(lighter.blockIsIn()))
+    {
+      Move(0.25, 40, 2, 1);
+      vex::task::sleep(250);
+    }
+    Move(-1, 50, 2, 0);
 
     /*if(Brain.SDcard.isInserted())
     {
