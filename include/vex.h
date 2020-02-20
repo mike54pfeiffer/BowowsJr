@@ -19,6 +19,7 @@
 #include <iomanip>
 #include <fstream>
 #include <iostream>
+#include <climits>
 
 //Vex Coding Studio Libraries
 #include "v5.h"
@@ -26,6 +27,11 @@
 
 //Vex Namespace
 using namespace vex;
+
+//Global Variables
+const int redMotor_RPM = 100;
+const int greenMotor_RPM = 200;
+const int blueMotor_RPM = 600;
 
 /*---------------------------------------------------------------------------
   extern competition

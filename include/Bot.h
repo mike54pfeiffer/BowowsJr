@@ -15,6 +15,7 @@
 #include "LineSensor.h"
 #include "GyroSensor.h"
 #include "LightSensor.h"
+#include "DataLogging.h"
 
 struct Bot
 {

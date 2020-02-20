@@ -1,3 +1,7 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// ---- END VEXCODE CONFIGURED DEVICES ----
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
@@ -267,13 +271,11 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{RED, BLUE, SKILLS, TEST};
-  Color side = SKILLS;
+  Color side = RED;
 
   Bot test;
   GyroSensor Gyroscope;
   LineSensor lineTracker;
-  std::ofstream outFile;
-  std::ifstream inFile;
   LeftArmMotor.setMaxTorque(100, percentUnits::pct);
   RightArmMotor.setMaxTorque(100, percentUnits::pct);
 
@@ -507,22 +509,32 @@ void autonomous(void) {
 
   if(side == TEST)
   {
-    LightSensor lighter;
-    Move(1, 30, 3, 1);
-    while(!(lighter.blockIsIn()))
+    if(Brain.SDcard.isInserted())
     {
-      Move(0.25, 40, 2, 1);
-      vex::task::sleep(250);
-    }
-    Move(-1, 50, 2, 0);
+      std::ifstream inFile;
+      DataLogging logger;
 
-    /*if(Brain.SDcard.isInserted())
-    {
-      outFile.open("Data_Logging.txt", std::ofstream::out);
-      
-      outFile.close();
+      inFile.open("Data_Logging.txt", std::ifstream::in);
+
+      while(inFile >> logger)
+      {
+        logger.nextPosition();
+      }
+
+      inFile.close();
     }
-    */
+
+    else
+    {
+      LightSensor lighter;
+      Move(1, 30, 3, 1);
+      while(!(lighter.blockIsIn()))
+      {
+        Move(0.25, 40, 2, 1);
+        vex::task::sleep(250);
+      }
+      Move(-1, 50, 2, 0);
+    }
 
     /*
     VisionSensor.setWifiMode(vex::vision::wifiMode::off);
@@ -621,12 +633,43 @@ void usercontrol(void) {
   LeftArmMotor.resetRotation();
   RightArmMotor.resetRotation();
 
-  LeftArmMotor.setMaxTorque(100, percentUnits::pct);
-  RightArmMotor.setMaxTorque(100, percentUnits::pct);
+  std::ofstream outFile;
 
+  int count = 0;
+  bool editor = true;
+  bool Data_Logging = false;
   bool lowTowerTask = false;
   bool midTowerTask = false;
   bool highTowerTask = false;
+
+  if (editor)
+  {
+    Brain.Screen.clearScreen();
+    Controller1.Screen.clearScreen();
+    Brain.Screen.printAt(10, 30, "Editor Mode On");
+    Controller1.Screen.print("Editor Mode On");
+    Controller1.Screen.newLine();
+  }
+  else
+  {
+    Brain.Screen.clearScreen();
+    Controller1.Screen.clearScreen();
+    Brain.Screen.printAt(10, 30, "Editor Mode Off");
+    Controller1.Screen.print("Editor Mode Off");
+    Controller1.Screen.newLine();
+  }
+  if (Brain.SDcard.isInserted())
+  {
+    Brain.Screen.printAt(10, 50, "SD Card Found");
+    Controller1.Screen.print("SD Card Found");
+    Controller1.Screen.newLine();
+  }
+  else
+  {
+    Brain.Screen.printAt(10, 50, "SD Card Not Found");
+    Controller1.Screen.print("SD Card Not Found");
+    Controller1.Screen.newLine();
+  }
 
   while (1) {
     //TankDrive();
@@ -653,14 +696,14 @@ void usercontrol(void) {
       }
       if(Controller1.ButtonR1.pressing()){
       //arm system down
-        LeftArmMotor.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
-        RightArmMotor.spin(vex::directionType::rev, 80, vex::velocityUnits::pct);
+        LeftArmMotor.spin(vex::directionType::fwd, 90, vex::velocityUnits::pct);
+        RightArmMotor.spin(vex::directionType::rev, 90, vex::velocityUnits::pct);
     
       }
       else if(Controller1.ButtonL1.pressing()){
       //arm system up
-        LeftArmMotor.spin(vex::directionType::fwd, -35, vex::velocityUnits::pct);
-        RightArmMotor.spin(vex::directionType::rev, -35, vex::velocityUnits::pct);
+        LeftArmMotor.spin(vex::directionType::fwd, -90, vex::velocityUnits::pct);
+        RightArmMotor.spin(vex::directionType::rev, -90, vex::velocityUnits::pct);
     
       }
     else{
@@ -690,8 +733,16 @@ void usercontrol(void) {
         {
           //condiition satisfied
           lowTowerTask = false;
-          LeftArmMotor.stop(vex::brakeType::hold);
-          RightArmMotor.stop(vex::brakeType::hold);
+          if(editor)
+          {
+            LeftArmMotor.stop(vex::brakeType::brake);
+            RightArmMotor.stop(vex::brakeType::brake);  
+          }
+          else
+          {
+            LeftArmMotor.stop(vex::brakeType::hold);
+            RightArmMotor.stop(vex::brakeType::hold);
+          }
         }
       }
       if(Controller1.ButtonB.pressing() || midTowerTask)
@@ -728,9 +779,72 @@ void usercontrol(void) {
         RightArmMotor.stop(vex::brakeType::hold);
         LeftArmMotor.stop(vex::brakeType::hold);
       }
-      if(Controller1.ButtonY.pressing())
+      if(Controller1.ButtonUp.pressing() && Brain.SDcard.isInserted() && editor)
       {
-
+        vex::task::sleep(500);
+        if(Data_Logging)
+        {
+          if(outFile.is_open())
+          {
+            //increase loop counter variable
+            count++;
+            //record current encoder rotation values of each motor
+            outFile << RightArmMotor.rotation(vex::rotationUnits::rev) << ',' //rightArmMotor rotation value
+                    << LeftArmMotor.rotation(vex::rotationUnits::rev) << ',' //leftArmMotor rotaion value
+                    << RightIntakeMotor.rotation(vex::rotationUnits::rev) << ',' //rightIntakeMotor rotaion value
+                    << LeftIntakeMotor.rotation(vex::rotationUnits::rev) << ',' //leftIntakeMotor rotation value
+                    << RightBackMotor.rotation(vex::rotationUnits::rev) << ',' //rightBackMotor rotation value
+                    << LeftBackMotor.rotation(vex::rotationUnits::rev) << ',' //leftBackMotor rotation value
+                    << RightFrontMotor.rotation(vex::rotationUnits::rev) << ',' //rightFrontMotor rotation value
+                    << LeftFrontMotor.rotation(vex::rotationUnits::rev) << '\n'; //leftFrontMotor rotation value
+            //print message for UI
+            Brain.Screen.clearScreen();
+            Brain.Screen.printAt(10, 30, "Values recorded %d times", count);
+            Controller1.Screen.clearScreen();
+            Controller1.Screen.print("Values recorded %d times", count);
+            Controller1.Screen.newLine();
+          }
+          else
+          {
+            outFile.open("Data_Logging.txt", std::ofstream::out);
+            outFile << 0 << ',' //rightArmMotor rotation value
+                    << 0 << ',' //leftArmMotor rotaion value
+                    << 0 << ',' //rightIntakeMotor rotaion value
+                    << 0 << ',' //leftIntakeMotor rotation value
+                    << 0 << ',' //rightBackMotor rotation value
+                    << 0 << ',' //leftBackMotor rotation value
+                    << 0 << ',' //rightFrontMotor rotation value
+                    << 0 << ',' //leftFrontMotor rotation value
+                    << '\n';
+            Brain.Screen.clearScreen();
+            Brain.Screen.printAt(10, 30, "file opened");
+            Controller1.Screen.clearScreen();
+            Controller1.Screen.print("file opened");
+            Controller1.Screen.newLine();
+          }
+        }
+        else
+        {
+          Data_Logging = true;
+          //reset rotation of motor in order as their values will appear on the .txt file
+          RightArmMotor.resetRotation();
+          LeftArmMotor.resetRotation();
+          RightIntakeMotor.resetRotation();
+          LeftIntakeMotor.resetRotation();
+          RightBackMotor.resetRotation();
+          LeftBackMotor.resetRotation();
+          RightFrontMotor.resetRotation();
+          LeftFrontMotor.resetRotation();
+        }
+      }
+      else if(Controller1.ButtonDown.pressing() && Brain.SDcard.isInserted() && outFile.is_open())
+      {
+        outFile.close();
+        Brain.Screen.clearScreen();
+        Brain.Screen.printAt(10, 30, "File Closed");
+        Controller1.Screen.clearScreen();
+        Controller1.Screen.print("File Closed");
+        Controller1.Screen.newLine();
       }
     vex::task::sleep(20); // Sleep the task for a short amount of time to
                           // prevent wasted resources.
