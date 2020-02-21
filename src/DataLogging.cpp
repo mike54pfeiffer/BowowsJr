@@ -16,15 +16,16 @@ DataLogging::DataLogging()
 
 void DataLogging::nextPosition(int armSpeed, int intakeSpeed, int driveSpeed)
 {
+  //simple data types
   enum motorGroup {ARM, INTAKE, DRIVE, ERROR};
 
-  //initiallize variables
+  //declare and initiallize variables
   double rotationValue[8] = {0};
+  unsigned int motorWaitTime[8] = {0};
   double theoTime = 0;
-  int waitTime = 0;
-  int additionalTime = 50;
-  double maxRotation = INT_MIN;
-  motorGroup longestRotation;
+  unsigned int additionalTime = 100;
+  unsigned int slowestRotation = 0;
+  motorGroup currentMotor;
 
   //set motor velocity
   RightArmMotor.setVelocity(armSpeed, vex::velocityUnits::pct);
@@ -39,65 +40,71 @@ void DataLogging::nextPosition(int armSpeed, int intakeSpeed, int driveSpeed)
   //calculate the difference from previous rotation value to next rotation value
   for(int i = 0; i < 8; i++)
   {
+    //calculate the distance to rotate each motor
     rotationValue[i] = nextRotationValue[i] - preRotationValue[i];
+
+    //update previous rotation value to current rotation value
     preRotationValue[i] = nextRotationValue[i];
-    if(maxRotation < rotationValue[i])
+
+    //check to see which motor is being checked
+    switch(i)
     {
-      maxRotation = rotationValue[i];
-      switch(i)
+      case 0:
+      case 1:
       {
-        case 0:
-        case 1:
-        {
-          longestRotation = ARM;
-          break;
-        }
-        case 2:
-        case 3:
-        {
-          longestRotation = INTAKE;
-          break;
-        }
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-        {
-          longestRotation = DRIVE;
-          break;
-        }
-        default:
-        {
-          longestRotation = ERROR;
-        }
+        currentMotor = ARM;
+        break;
+      }
+      case 2:
+      case 3:
+      {
+        currentMotor = INTAKE;
+        break;
+      }
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+      {
+        currentMotor = DRIVE;
+        break;
+      }
+      default:
+      {
+        currentMotor = ERROR;
       }
     }
-  }
 
-  //Theoretical Time = ((Rev) / (Vpct / 100) * Vmax)) * 60 * 1000
-  if(longestRotation == ARM)
-  {
-    theoTime = (maxRotation / (armSpeed * redMotor_RPM) * 6000000);
-    additionalTime = armSpeed * armSpeed * static_cast<double>(armSpeed/(2 * redMotor_RPM));
-  }
-  else if(longestRotation == INTAKE)
-  {
-    theoTime = (maxRotation / (intakeSpeed * redMotor_RPM) * 6000000);
-  }
-  else if(longestRotation == DRIVE)
-  {
-    theoTime = (maxRotation / (driveSpeed * greenMotor_RPM) * 6000000);
-  }
-  else
-  {
-    theoTime = 5000;
-  }
+    //apply correct formula for the specific motor
+    if(currentMotor == ARM)
+    {
+      theoTime = (rotationValue[i] / (armSpeed * redMotor_RPM) * 6000000);
+    }
+    else if(currentMotor == INTAKE)
+    {
+      theoTime = (rotationValue[i] / (intakeSpeed * redMotor_RPM) * 6000000);
+    }
+    else if(currentMotor == DRIVE)
+    {
+      theoTime = (rotationValue[i] / (driveSpeed * greenMotor_RPM) * 6000000);
+    }
+    else
+    {
+      theoTime = 5000;
+    }
 
-  //round answer to nearest ones place
-  waitTime = static_cast<int>(theoTime + 0.5);
+    //round answer to nearest ones place
+    motorWaitTime[i] = static_cast<int>(theoTime + 0.5);
 
-  //add extra time to account for friction and startup lag
-  waitTime += ((waitTime / 1000.0) * 50) + additionalTime; //additional time to account for statup lag
+    //add extra time to account for friction and startup lag
+    motorWaitTime[i] += ((motorWaitTime[i] / 1000.0) * 50) + additionalTime; //additional time to account for statup lag
+  
+    //check which motor rotates the longest
+    if(slowestRotation < motorWaitTime[i])
+    {
+      slowestRotation = rotationValue[i];
+    }
+  }
 
   //rotate motors all at once to the desired position
   RightArmMotor.rotateFor(rotationValue[0], vex::rotationUnits::rev, false);
@@ -110,7 +117,7 @@ void DataLogging::nextPosition(int armSpeed, int intakeSpeed, int driveSpeed)
   LeftFrontMotor.rotateFor(rotationValue[7], vex::rotationUnits::rev, false);
   
   //wait for all motors to finish rotating
-  vex::task::sleep(waitTime);
+  vex::task::sleep(slowestRotation);
 }
 
 void DataLogging::skipStep()

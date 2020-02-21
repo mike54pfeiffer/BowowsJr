@@ -15,7 +15,6 @@
 
 
 // Global Variables
-#include "vex.h"
 #include "RobotConfiguration.h"
 #include "Bot.h"
 #include "VisionSensor.h"
@@ -270,8 +269,8 @@ void pneumatics(){
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  enum Color{RED, BLUE, SKILLS, TEST};
-  Color side = RED;
+  enum Color{BLUE, RED, SKILLS, TEST};
+  Color side = TEST;
 
   Bot test;
   GyroSensor Gyroscope;
@@ -296,9 +295,9 @@ void autonomous(void) {
     Gyroscope.GyroTurn(94, 25);
     vex::task::sleep(100);
     //release intake system and push left side tower
-    ArmMove(100,-.3, 2);
+    ArmMove(100,.3, 2);
     vex::task::sleep(100);
-    ArmMove(-85,.4, 2);
+    ArmMove(-85,-.4, 2);
     vex::task::sleep(500);
     //move back to line up cube to intake
     Move(-.1,30, 1, 0);
@@ -317,9 +316,9 @@ void autonomous(void) {
     //face middle tower
     Gyroscope.GyroTurn(-95, 30);
     //go to tower
-    Move(1, 30, 3, 0);
+    Move(0.9, 30, 3, 0);
     //move arms up
-    ArmMove(40, -1.3, 3);
+    ArmMove(40, 1.3, 3);
     //score high
     Intake(-80, 2 ,1);
     //////////////////////////////
@@ -362,9 +361,9 @@ void autonomous(void) {
     Gyroscope.GyroTurn(-94, 25);
     vex::task::sleep(100);
     //release intake system and push left side tower
-    ArmMove(100,-.3, 2);
+    ArmMove(100,.3, 2);
     vex::task::sleep(100);
-    ArmMove(-85,.4, 2);
+    ArmMove(-85,-.4, 2);
     vex::task::sleep(500);
     //move back to line up cube to intake
     Move(-.1,25, 1, 0);
@@ -386,9 +385,9 @@ void autonomous(void) {
     //face middle tower
     Gyroscope.GyroTurn(95, 30);
     //go to tower
-    Move(1, 30, 3, 0);
+    Move(0.9, 30, 3, 0);
     //move arms up
-    ArmMove(40, -1.3, 3);
+    ArmMove(40, 1.3, 3);
     //score high
     Intake(-80, 2 ,1);
 ///////////////////////////////////////////
@@ -816,11 +815,14 @@ void usercontrol(void) {
                     << 0 << ',' //rightFrontMotor rotation value
                     << 0 << ',' //leftFrontMotor rotation value
                     << '\n';
-            Brain.Screen.clearScreen();
-            Brain.Screen.printAt(10, 30, "file opened");
-            Controller1.Screen.clearScreen();
-            Controller1.Screen.print("file opened");
-            Controller1.Screen.newLine();
+            if(outFile.is_open())
+            {
+              Brain.Screen.clearScreen();
+              Brain.Screen.printAt(10, 30, "file opened");
+              Controller1.Screen.clearScreen();
+              Controller1.Screen.print("file opened");
+              Controller1.Screen.newLine();
+            }
           }
         }
         else
