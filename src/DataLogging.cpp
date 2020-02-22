@@ -22,8 +22,8 @@ void DataLogging::nextPosition(int armSpeed, int intakeSpeed, int driveSpeed)
   //declare and initiallize variables
   double rotationValue[8] = {0};
   unsigned int motorWaitTime[8] = {0};
-  double theoTime = 0;
-  unsigned int additionalTime = 100;
+  long double theoTime = 0;
+  unsigned int additionalTime = 250;
   unsigned int slowestRotation = 0;
   motorGroup currentMotor;
 
@@ -78,15 +78,15 @@ void DataLogging::nextPosition(int armSpeed, int intakeSpeed, int driveSpeed)
     //apply correct formula for the specific motor
     if(currentMotor == ARM)
     {
-      theoTime = (rotationValue[i] / (armSpeed * redMotor_RPM) * 6000000);
+      theoTime = fabs((rotationValue[i] / (armSpeed * redMotor_RPM) * 6000000));
     }
     else if(currentMotor == INTAKE)
     {
-      theoTime = (rotationValue[i] / (intakeSpeed * redMotor_RPM) * 6000000);
+      theoTime = fabs((rotationValue[i] / (intakeSpeed * redMotor_RPM) * 6000000));
     }
     else if(currentMotor == DRIVE)
     {
-      theoTime = (rotationValue[i] / (driveSpeed * greenMotor_RPM) * 6000000);
+      theoTime = fabs((rotationValue[i] / (driveSpeed * greenMotor_RPM) * 6000000));
     }
     else
     {
@@ -97,12 +97,12 @@ void DataLogging::nextPosition(int armSpeed, int intakeSpeed, int driveSpeed)
     motorWaitTime[i] = static_cast<int>(theoTime + 0.5);
 
     //add extra time to account for friction and startup lag
-    motorWaitTime[i] += ((motorWaitTime[i] / 1000.0) * 50) + additionalTime; //additional time to account for statup lag
+    motorWaitTime[i] += ((motorWaitTime[i] / 1000.0) * 100) + additionalTime; //additional time to account for statup lag
   
     //check which motor rotates the longest
     if(slowestRotation < motorWaitTime[i])
     {
-      slowestRotation = rotationValue[i];
+      slowestRotation = motorWaitTime[i];
     }
   }
 
@@ -115,7 +115,7 @@ void DataLogging::nextPosition(int armSpeed, int intakeSpeed, int driveSpeed)
   LeftBackMotor.rotateFor(rotationValue[5], vex::rotationUnits::rev, false);
   RightFrontMotor.rotateFor(rotationValue[6], vex::rotationUnits::rev, false);
   LeftFrontMotor.rotateFor(rotationValue[7], vex::rotationUnits::rev, false);
-  
+
   //wait for all motors to finish rotating
   vex::task::sleep(slowestRotation);
 }
