@@ -270,7 +270,7 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{BLUE, RED, SKILLS, TEST, BLUE_VS_USC, RED_VS_USC};
-  Color side = BLUE;
+  Color side = RED;
 
   Bot test;
   GyroSensor Gyroscope;
@@ -304,21 +304,32 @@ void autonomous(void) {
     vex::task::sleep(250);
     //move forward to intake cube 
     Move(.4,35,1, 1);
-    //move around tower to get a straight push into the 
+    //move around tower and line up to push
     Gyroscope.GyroTurn(-30,30);
-    Move(-.4,25,2, 0);
+    Move(-.5,25,2, 0);
     Gyroscope.GyroTurn(68,25);
     vex::task::sleep(150);
+    //push tower
     Move(-2, 30, 2, 0);
-    Move(-2, 75, 2, 0);
+    Move(-1.9, 75, 2, 0);
     //move out of score zone
     Move(1,50, 2, 0);
+
+    //realign bot against wall
+    Gyroscope.GyroTurn(-20, 30);
+    Move(-1, 30, 5, 0);
+    vex::task::sleep(100);
+
     //face middle tower
-    Gyroscope.GyroTurn(-95, 30);
+    Move(0.3, 30, 3, 0);
+    Gyroscope.GyroTurn(-10, 30);
+
     //go to tower
-    Move(0.9, 30, 3, 0);
-    //move arms up
+    Move(0.7, 30, 3, 0);
+    //move arms up and realign with tower
     ArmMove(40, -0.65, 3);
+    Move(0.15, 30, 3, 0);
+
     //score high
     Intake(-80, 2 ,1);
     //////////////////////////////
@@ -372,22 +383,31 @@ void autonomous(void) {
     Move(.4,40,1, 1);
     //move around tower to get a straight push into the 
     Gyroscope.GyroTurn(24,30);
-    Move(-.4,25,2, 0);
+    Move(-.5,25,2, 0);
     Gyroscope.GyroTurn(-73,25);
     vex::task::sleep(150);
 
     //push into corner
     Move(-2, 30, 2 , 0);
-    Move(-2, 75, 2, 0);
+    Move(-1.9, 75, 2, 0);
     //move out of score zone
     Move(1,50, 2, 0);
 
+    //realign bot against wall
+    Gyroscope.GyroTurn(20, 30);
+    Move(-1, 30, 5, 0);
+    vex::task::sleep(100);
+
     //face middle tower
-    Gyroscope.GyroTurn(95, 30);
+    Move(0.3, 30, 3, 0);
+    Gyroscope.GyroTurn(10, 30);
+
     //go to tower
     Move(0.7, 30, 3, 0);
-    //move arms up
+    //move arms up and aline with tower
     ArmMove(40, -0.65, 3);
+    Move(0.15, 30, 3, 0);
+
     //score high
     Intake(-80, 2 ,1);
 ///////////////////////////////////////////
@@ -445,15 +465,15 @@ void autonomous(void) {
     LeftArmMotor.stop(vex::brakeType(hold));
     RightArmMotor.stop(vex::brakeType(hold));
     vex::task::sleep(250);
-    //move forward
+    //move forward to realign arms with tower
     Move(0.15, 30, 2, 0);
     //score high
     vex::task::sleep(100);
     Intake(-80, 3 ,1);
     //back up to wall
     Move(-0.2, 30, 2, 0);
-    //turn to gather preload
     vex::task::sleep(100);
+    //turn to gather preload
     Gyroscope.GyroTurn(60, 30);
     //slowly lower arms
     ArmMove(50, 0.5, 2);
@@ -475,6 +495,8 @@ void autonomous(void) {
     //lift arms up
     ArmMove(80, -0.55, 2);
     vex::task::sleep(250);
+    //move and realign arms arms with tower
+    Move(0.15, 30, 2, 0);
     //score high
     Intake(-80, 3 ,1);
     //lower arms
@@ -491,19 +513,43 @@ void autonomous(void) {
     //move back to line up cube push
     Move(-0.4, 50, 2, 0);
     //turn to face cube
-    Gyroscope.GyroTurn(-25, 30);
+    Gyroscope.GyroTurn(-20, 30);
     //push cube into score zone
     Move(-0.7, 80, 2, 0);
     vex::task::sleep(250);
     //move out of score zone
-    Move(0.3, 40, 2, 0);
+    Move(0.5, 40, 2, 0);
     //turn and realign with wall
-    Gyroscope.GyroTurn(30, 30);
-    Move(-0.4, 40, 2, 0);
-    //move forward and turn
+    Gyroscope.GyroTurn(40, 30);
+    Move(-0.6, 40, 2, 0);
+    vex::task::sleep(100);
+    //move forward and turn to face cross tower
     Move(0.3, 40, 2, 0);
     Gyroscope.GyroTurn(-25, 30);
-    Move(2, 40, 2, 0);
+    //move across field to tower
+    Move(7, 40, 2, 0);
+    vex::task::sleep(100);
+    //move arms up to tower
+    ArmMove(80, -0.65, 2);
+    //align arms to tower
+    Move(0.15, 30, 2, 0);
+    vex::task::sleep(100);
+    //score high
+    Intake(-80, 3 ,1);
+    //back out and lower arms
+    Move(-0.5, 30, 3, 0);
+    vex::task::sleep(100);
+    ArmMove(50, 0.5, 2);
+    LeftArmMotor.stop(vex::brakeType(coast));
+    RightArmMotor.stop(vex::brakeType(coast));
+    vex::task::sleep(100);
+    //turn to score zone
+    Gyroscope.GyroTurn(-80, 30);
+    Move(-2, 30, 2 , 0);
+    Move(-2, 75, 2, 0);
+    vex::task::sleep(100);
+    Move(1, 70, 3, 0);
+    //end SKILLS
   }
 
   if(side == TEST)
