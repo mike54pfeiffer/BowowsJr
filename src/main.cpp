@@ -970,7 +970,7 @@ void usercontrol(void) {
         {
           if(outFile.is_open())
           {
-            //increase loop counter variable
+            //increase loop counter variable-
             count++;
             //record current encoder rotation values of each motor
             outFile << RightArmMotor.rotation(vex::rotationUnits::rev) << ',' //rightArmMotor rotation value
