@@ -1,5 +1,5 @@
 #include "RobotConfiguration.h"
-#include "GyroSensor.h"
+#include "Classes_Header/GyroSensor.h"
 
 void GyroSensor::GyroTest()
 {
@@ -18,16 +18,12 @@ void GyroSensor::GyroTest()
 
 /*---------------------------------------------------------------------------
   GyroTurn
-
     This function tells the robot to turn either to the right or left,
     based on gyro
-
     Variables:
     DegreeAmount(Degree)
     Velocity(Percentage)
-
     Notes:
-
 ---------------------------------------------------------------------------*/
 
 void GyroSensor::GyroTurn(double DegreeAmount, int Velocity) {

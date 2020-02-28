@@ -16,8 +16,8 @@
 
 // Global Variables
 #include "RobotConfiguration.h"
-#include "Bot.h"
-#include "VisionSensor.h"
+#include "Classes_Header/Bot.h"
+#include "Classes_Header/VisionSensor.h"
 
 double DriveGearDifference = 1; // The gear ratio is of 2.6 meaning a gear
                                   // reduction (3 - 2) (18 - 12) sprockets

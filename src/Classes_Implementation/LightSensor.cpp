@@ -1,5 +1,5 @@
 #include "RobotConfiguration.h"
-#include "LightSensor.h"
+#include "Classes_Header/LightSensor.h"
 
 LightSensor::LightSensor()
 {

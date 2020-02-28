@@ -1,5 +1,5 @@
 #include "RobotConfiguration.h"
-#include "LineSensor.h"
+#include "Classes_Header/LineSensor.h"
 
 void LineSensor::fallBack()
 {
