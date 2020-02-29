@@ -250,10 +250,10 @@ void pneumatics(){
   //int count = 0;
   while(1){
     if(Controller1.ButtonB.pressing()){
-      leftpiston.set(false);
+      Piston.set(false);
       }
     else{
-      leftpiston.set(true);
+      Piston.set(true);
     }
   }
 }

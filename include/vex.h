@@ -26,19 +26,11 @@
 #include "v5_vcs.h"
 
 //Vex Namespace
-using namespace vex;
+  using namespace vex;
 
 //Global Variables
-const int redMotor_RPM = 100;
-const int greenMotor_RPM = 200;
-const int blueMotor_RPM = 600;
-
-/*---------------------------------------------------------------------------
-  extern competition
-
-    -Competition is defined in file: (vex.cpp)
-
----------------------------------------------------------------------------*/
-extern competition Competition;
+  const int redMotor_RPM = 100;
+  const int greenMotor_RPM = 200;
+  const int blueMotor_RPM = 600;
 
 #endif

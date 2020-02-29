@@ -47,7 +47,7 @@ void Bot::outtake()
       Brain.Screen.printAt(1, 20, "count: %f", count);
       RightTiltMotor.stop();
       LeftTiltMotor.stop();
-      leftpiston.set(false);
+      Piston.set(false);
       LeftFrontMotor.setVelocity(50, vex::velocityUnits::pct);
       RightFrontMotor.setVelocity(50, vex::velocityUnits::pct);
       LeftBackMotor.setVelocity(50, vex::velocityUnits::pct);
@@ -60,7 +60,7 @@ void Bot::outtake()
     count = time(0);
   }
 
-    leftpiston.set(true);
+    Piston.set(true);
     LeftFrontMotor.stop();
     RightFrontMotor.stop();
     LeftBackMotor.stop();
