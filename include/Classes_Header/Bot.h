@@ -22,12 +22,16 @@ struct Bot
   public:
   GyroSensor gyroSensor;
   LineSensor lineSensor;
+  LightSensor lightSensor;
+  DataLogging datalogger;
 
-  void setArms();
-  void riseLow();
-  void riseHigh();
-  void outtake();
-  void parabolicTurn(char, int);
+  void setArms(double, int = 5);
+  void raiseLow(int = 5);
+  void raiseMid(int = 5);
+  void raiseHigh(int = 5);
+  void outtake(int = 5);
+  void moveTo(double, int, int = 5);
+  void move(double, int, int = 5);
 };
 
 #endif

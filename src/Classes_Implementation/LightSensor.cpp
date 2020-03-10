@@ -5,6 +5,7 @@ LightSensor::LightSensor()
 {
   lightValue = LightReader.value(analogUnits::mV);
   lightValueWithBlock = 550;
+  tolerance = 50;
 }
 
 void LightSensor::Callibrate()
@@ -29,7 +30,7 @@ void LightSensor::LightTest()
 bool LightSensor::blockIsIn(int pause)
 {
   vex::task::sleep(pause);
-  if(LightReader.value(analogUnits::mV) > lightValueWithBlock)
+  if(LightReader.value(analogUnits::mV) > lightValueWithBlock - tolerance)
   {
     return true;
   }

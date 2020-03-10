@@ -16,112 +16,38 @@
     Could a second gyro be added to create make the Tilt Motor easier
 
 ---------------------------------------------------------------------------*/
-void setArms()
+void Bot::setArms(double rev, int timeout)
+{
+  ArmSystem.rotateTo(rev, vex::rotationUnits::rev);
+}
+
+void Bot::raiseLow(int timeout)
+{
+  //setArms(0.7);
+
+}
+
+void Bot::raiseMid(int timeout)
+{
+  //setArms(0.9);
+}
+
+void Bot::raiseHigh(int timeout)
+{
+  setArms(1.1);
+}
+
+void Bot::outtake(int timeout)
 {
   
 }
 
-void Bot::riseLow()
+void Bot::moveTo(double rev, int speed, int timeout)
 {
-  setArms();
-
-}
-
-void Bot::riseHigh()
-{
-  setArms();
-}
-
-void Bot::outtake()
-{
-  double count = time(0);
-  while(count != 5)
-  {
-    if(count != 4 && count != 5)
-    {
-      RightTiltMotor.spin(vex::directionType::fwd, 25, vex::velocityUnits::pct);
-      LeftTiltMotor.spin(vex::directionType::fwd, 25, vex::velocityUnits::pct);
-    }
-    else if(count != 0 && count != 1 && count != 2 && count != 3)
-    {
-      Brain.Screen.printAt(1, 20, "count: %f", count);
-      RightTiltMotor.stop();
-      LeftTiltMotor.stop();
-      Piston.set(false);
-      LeftFrontMotor.setVelocity(50, vex::velocityUnits::pct);
-      RightFrontMotor.setVelocity(50, vex::velocityUnits::pct);
-      LeftBackMotor.setVelocity(50, vex::velocityUnits::pct);
-      RightBackMotor.setVelocity(50, vex::velocityUnits::pct);
-      LeftBackMotor.spin(directionType::rev); 
-      LeftFrontMotor.spin(directionType::rev); 
-      RightBackMotor.spin(directionType::rev); 
-      RightFrontMotor.spin(directionType::rev);
-    }
-    count = time(0);
-  }
-
-    Piston.set(true);
-    LeftFrontMotor.stop();
-    RightFrontMotor.stop();
-    LeftBackMotor.stop();
-    RightBackMotor.stop();
-}
-
-/*---------------------------------------------------------------------------
-  Parabolic Turn
-
-    This function allows for the bot to take a parabolic path
-    
-    Variables:
-    ******STILL NEED TO ADD*******
-
-    Notes:
-
----------------------------------------------------------------------------*/
-
-void Bot::parabolicTurn(char turnDirection, int degree)
-{
-  turnDirection = toupper(turnDirection);
-  int counter = 0;
-
-  LeftFrontMotor.setVelocity(50, vex::velocityUnits::pct);
-  RightFrontMotor.setVelocity(50, vex::velocityUnits::pct);
-  LeftBackMotor.setVelocity(50, vex::velocityUnits::pct);
-  RightBackMotor.setVelocity(50, vex::velocityUnits::pct);
-
-  Gyro.startCalibration();
   
-  // wait for calibration to finish, usually 1 second
-  //Set speeds of both Drive motors
-    vex::task::sleep(1000);
+}
 
-  while(1)
-  {
-    if(Gyro.value(rotationUnits::deg) <= degree)
-    {
-      break;
-    }
-    counter++;  
-    if(counter % 2 == 0)
-    {
-      LeftBackMotor.spin(directionType::fwd); 
-      LeftFrontMotor.spin(directionType::fwd); 
-      RightBackMotor.spin(directionType::fwd); 
-      RightFrontMotor.spin(directionType::fwd);
-    }
-    else if(turnDirection == 'L')
-    {
-      LeftBackMotor.spin(directionType::rev); 
-      LeftFrontMotor.spin(directionType::rev); 
-      RightBackMotor.spin(directionType::fwd); 
-      RightFrontMotor.spin(directionType::fwd);
-    }
-    else if(turnDirection == 'R')
-    {
-      LeftBackMotor.spin(directionType::fwd); 
-      LeftFrontMotor.spin(directionType::fwd); 
-      RightBackMotor.spin(directionType::rev); 
-      RightFrontMotor.spin(directionType::rev);
-    }
-  }
+void Bot::move(double rev, int speed, int timeout)
+{
+
 }

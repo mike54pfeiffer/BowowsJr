@@ -16,24 +16,27 @@
   extern controller Controller1;
 
 /*----- Drive System -----*/
-  extern motor RightBackMotor1;
-  extern motor RightBackMotor2;
-  extern motor LeftBackMotor1;
-  extern motor LeftBackMotor2;
-  extern motor RightFrontMotor1;
-  extern motor RightFrontMotor2;
-  extern motor LeftFrontMotor1;
-  extern motor LeftFrontMotor2;
+  extern motor LeftFrontMotorF;
+  extern motor RightFrontMotorF;
+  extern motor LeftFrontMotorB;
+  extern motor RightFrontMotorB;
+  extern motor LeftBackMotorF;
+  extern motor RightBackMotorF;
+  extern motor LeftBackMotorB;
+  extern motor RightBackMotorB;
   extern motor_group LeftFrontMotor;
   extern motor_group RightFrontMotor;
   extern motor_group LeftBackMotor;
   extern motor_group RightBackMotor;
   extern motor_group LeftDrive;
   extern motor_group RightDrive;
+  extern motor_group DriveSystem;
 
 /*----- Arm System -----*/
-  extern motor RightArmMotor;
-  extern motor LeftArmMotor;
+  extern motor LeftArmMotorT; 
+  extern motor RightArmMotorT;
+  extern motor LeftArmMotorB; 
+  extern motor RightArmMotorB;
   extern motor_group ArmSystem;
 
 /*----- Intake System -----*/

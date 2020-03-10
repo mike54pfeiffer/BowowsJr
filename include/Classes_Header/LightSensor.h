@@ -16,11 +16,13 @@ class LightSensor
   private:
     int lightValueWithBlock;
     int lightValue;
+    int tolerance;
   public:
     LightSensor();
     void Callibrate();
     void LightTest();
     bool blockIsIn(int = 750);
+    bool blockisOut();
 };
 
 #endif

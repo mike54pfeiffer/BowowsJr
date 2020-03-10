@@ -7,5 +7,5 @@ vex::vision::signature BLUE_TILE = vex::vision::signature (4, -3811, -3155, -348
 vex::vision::signature RED_TILE = vex::vision::signature (5, 4839, 5821, 5330, -409, 143, -134, 2.4, 0);
 vex::vision::signature SIG_6 = vex::vision::signature (6, 0, 0, 0, 0, 0, 0, 3, 0);
 vex::vision::signature SIG_7 = vex::vision::signature (7, 0, 0, 0, 0, 0, 0, 3, 0);
-vex::vision VisionSensor = vex::vision (vex::PORT11, 65, ORANGE_CUBE, PURPLE_CUBE, GREEN_CUBE, BLUE_TILE, RED_TILE, SIG_6, SIG_7);
+vex::vision VisionSensor = vex::vision (vex::PORT18, 65, ORANGE_CUBE, PURPLE_CUBE, GREEN_CUBE, BLUE_TILE, RED_TILE, SIG_6, SIG_7);
 /*vex-vision-config:end*/

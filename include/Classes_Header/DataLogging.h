@@ -4,20 +4,19 @@
 class DataLogging
 {
   private:
-    double preRotationValue[8];
-    double nextRotationValue[8];
-    double prevRightArmRotation;
-    double prevLeftArmRotation;
-    double prevRightIntakeRotation;
-    double prevLeftIntakeRotation;
+    double preRotationValue[7];
+    double nextRotationValue[7];
+    double prevArmRotation;
+    double prevIntakeRotation;
     double prevRightBackRotation;
     double prevLeftBackRotation;
     double prevRightFrontRotation;
     double prevLeftFrontRotation;
+    double prevGyroDegree;
 
   public:
     DataLogging();
-    void nextPosition(int = 80, int = 80, int = 40);
+    void nextPosition(int = 50, int = 80, int = 30);
     void skipStep();
     friend std::istream &operator>>(std::istream&, DataLogging&); 
 };

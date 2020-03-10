@@ -59,8 +59,7 @@ void Timeout(int Time) {
   RightBackMotor.setTimeout(Time, vex::timeUnits::sec);
   LeftIntakeMotor.setTimeout(Time, vex::timeUnits::sec);
   RightIntakeMotor.setTimeout(Time, vex::timeUnits::sec);
-  LeftArmMotor.setTimeout(Time, vex::timeUnits::sec);
-  RightArmMotor.setTimeout(Time, vex::timeUnits::sec);
+  ArmSystem.setTimeout(Time, vex::timeUnits::sec);
 }
 
 /*--------------------------------------------------------------------------
@@ -122,27 +121,19 @@ void Move(double Tiles, double Velocity, int Time, double Intake) {
   LeftBackMotor.setVelocity(Velocity, vex::velocityUnits::pct);
   RightBackMotor.setVelocity(Velocity, vex::velocityUnits::pct);
 
-  LeftFrontMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, false); // This command must be non blocking.
-  RightFrontMotor.rotateFor(-FinalDistance, vex::rotationUnits::deg, false);
-  LeftBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg, false);
-  RightBackMotor.rotateFor(FinalDistance, vex::rotationUnits::deg );  
+  DriveSystem.rotateFor(FinalDistance, vex::rotationUnits::deg, true);
 
-  RightIntakeMotor.stop(vex::brakeType(hold));
-  LeftIntakeMotor.stop(vex::brakeType(hold));
+  IntakeSystem.stop(vex::brakeType(hold));
 
 }
 
 void ArmMove(int Velocity, double Revolution, int time) {
   Timeout(time);
-  LeftArmMotor.setVelocity(Velocity,vex::velocityUnits::pct);
-  RightArmMotor.setVelocity(Velocity,vex::velocityUnits::pct);
+  ArmSystem.setVelocity(Velocity,vex::velocityUnits::pct);
 
-  LeftArmMotor.rotateFor(vex::directionType::fwd, Revolution, vex::rotationUnits::rev, false);
-  RightArmMotor.rotateFor(vex::directionType::rev, Revolution, vex::rotationUnits::rev);
+  ArmSystem.rotateFor(vex::directionType::fwd, Revolution, vex::rotationUnits::rev, true);
 
-  LeftArmMotor.stop(brakeType::hold);
-  RightArmMotor.stop(brakeType::hold);
-
+  ArmSystem.stop(brakeType::hold);
 }
 void TiltMove(int Velocity, double Revolution, int time) {
   Timeout(time);
@@ -227,7 +218,7 @@ void TurnRight(double Tiles, double Velocity, double Time) {
 bool ArmIsAt(double rotationValue, int Time)
 {
   Timeout(Time);
-  if(LeftArmMotor.rotation(vex::rotationUnits::rev) == rotationValue && RightArmMotor.rotation(vex::rotationUnits::rev)  == rotationValue)
+  if(ArmSystem.rotation(vex::rotationUnits::rev) == rotationValue)
   {
     return true;
   }
@@ -270,16 +261,14 @@ void pneumatics(){
 
 void autonomous(void) {
   enum Color{BLUE, RED, SKILLS, TEST, BLUE_VS_USC, RED_VS_USC};
-  Color side = RED;
+  Color side = BLUE;
 
   Bot test;
   GyroSensor Gyroscope;
   LineSensor lineTracker;
-  LeftArmMotor.setMaxTorque(100, percentUnits::pct);
-  RightArmMotor.setMaxTorque(100, percentUnits::pct);
+  ArmSystem.setMaxTorque(100, percentUnits::pct);
 
-  LeftArmMotor.resetRotation();
-  RightArmMotor.resetRotation();
+  ArmSystem.resetRotation();
 
   if(side == BLUE)
   {
@@ -292,69 +281,54 @@ void autonomous(void) {
     LeftBackMotor.stop(vex::brakeType::hold);
     RightBackMotor.stop(vex::brakeType::hold);
     //turn to face back toward tower
-    Gyroscope.GyroTurn(94, 25);
+    Gyroscope.GyroTurn(-98, 25);
     vex::task::sleep(100);
     //release intake system and push left side tower
-    ArmMove(100,-.3, 2);
+    ArmMove(100,-.2, 2);
     vex::task::sleep(100);
-    ArmMove(-85,.4, 2);
-    vex::task::sleep(500);
     //move back to line up cube to intake
-    Move(-.1,30, 1, 0);
+    Move(-.15,30, 1, 0);
     vex::task::sleep(250);
+    ArmMove(-85,.3, 2);
+    vex::task::sleep(500);
     //move forward to intake cube 
-    Move(.4,35,1, 1);
+    Move(.5,50,1, 1);
     //move around tower and line up to push
-    Gyroscope.GyroTurn(-30,30);
-    Move(-.5,25,2, 0);
-    Gyroscope.GyroTurn(68,25);
+    Gyroscope.GyroTurn(34,30);
+    Move(-.4,25,2, 0);
+    Gyroscope.GyroTurn(-70,25);
     vex::task::sleep(150);
     //push tower
-    Move(-2, 30, 2, 0);
-    Move(-1.9, 75, 2, 0);
+    Move(-1, 30, 2, 0);
+    Move(-0.8, 75, 2, 0);
     //move out of score zone
     Move(1,50, 2, 0);
 
     //realign bot against wall
-    Gyroscope.GyroTurn(-20, 30);
-    Move(-1, 30, 5, 0);
+    Gyroscope.GyroTurn(35, 30);
+    Move(-0.5, 30, 5, 0);
     vex::task::sleep(100);
 
     //face middle tower
     Move(0.3, 30, 3, 0);
-    Gyroscope.GyroTurn(-10, 30);
+    Gyroscope.GyroTurn(25, 30);
 
     //go to tower
-    Move(0.7, 30, 3, 0);
+    Move(0.8, 30, 3, 0);
+
     //move arms up and realign with tower
     ArmMove(40, -0.65, 3);
     Move(0.15, 30, 3, 0);
 
     //score high
     Intake(-80, 2 ,1);
-    //////////////////////////////
-    /*
-    //turn to face tower
-    Gyroscope.GyroTurn(64,35);
-    vex::task::sleep(100);
-    ArmMove(40, -1.2);
-    //move toward tower
-    Move(.1, 35, 2, 0);
-    //outtake cube to score high
-    Intake(-80, 2 ,1);
-    //move back
-    Move(-1, 50, 2, 0);
-    //move arms down
-    ArmMove(-20,1.2);
     
-    
-    Gyroscope.GyroTurn(-50,25);
-    Move(0.5, 50, 2, 1);
-    Move(-0.5, 50, 2, 0);
-    Gyroscope.GyroTurn(-100,30);
-    ArmMove(40, -1.3);
-    Intake(-80, 2 ,1);
-    */
+    //move back and lower arms to ready for user control
+    Move(-0.2, 20, 3, 0);
+    ArmMove(40, 0.5, 3);
+    ArmSystem.stop(vex::brakeType::coast);
+    vex::task::sleep(2000);
+    ArmSystem.stop(vex::brakeType::hold);
 
   }
          
@@ -363,53 +337,62 @@ void autonomous(void) {
     //wait for teammate to run set up
     vex::task::sleep(3000);
     //move forward to 4 stack tower
-    Move(-1.1, 20, 5, 0);
+    Move(-1.05, 20, 5, 0);
     LeftFrontMotor.stop(vex::brakeType::hold);
     RightFrontMotor.stop(vex::brakeType::hold);
     LeftBackMotor.stop(vex::brakeType::hold);
     RightBackMotor.stop(vex::brakeType::hold);
     //turn to face back toward tower
-    Gyroscope.GyroTurn(-94, 25);
+    Gyroscope.GyroTurn(95, 25);
     vex::task::sleep(100);
-    //release intake system and push left side tower
+    //release intake system
     ArmMove(100,-.3, 2);
     vex::task::sleep(100);
-    ArmMove(-85,.4, 2);
-    vex::task::sleep(500);
     //move back to line up cube to intake
     Move(-.1,25, 1, 0);
     vex::task::sleep(250);
+    //drop intake system
+    ArmMove(85,.4, 2);
+    vex::task::sleep(500);
     //move forward to intake cube 
-    Move(.4,40,1, 1);
+    Move(.5,50,2, 1);
     //move around tower to get a straight push into the 
-    Gyroscope.GyroTurn(24,30);
-    Move(-.5,25,2, 0);
-    Gyroscope.GyroTurn(-73,25);
+    Gyroscope.GyroTurn(-24,30);
+    Move(-.45,25,2, 0);
+    Gyroscope.GyroTurn(73,25);
     vex::task::sleep(150);
 
     //push into corner
-    Move(-2, 30, 2 , 0);
-    Move(-1.9, 75, 2, 0);
+    Move(-0.6, 30, 2 , 0);
+    Move(-1.1, 75, 2, 0);
     //move out of score zone
     Move(1,50, 2, 0);
 
     //realign bot against wall
-    Gyroscope.GyroTurn(20, 30);
-    Move(-1, 30, 5, 0);
+    Gyroscope.GyroTurn(-35, 30);
+    Move(-0.85, 30, 5, 0);
     vex::task::sleep(100);
 
     //face middle tower
     Move(0.3, 30, 3, 0);
-    Gyroscope.GyroTurn(10, 30);
+    Gyroscope.GyroTurn(-25, 30);
 
     //go to tower
-    Move(0.7, 30, 3, 0);
+    Move(0.8, 30, 3, 0);
+
     //move arms up and aline with tower
     ArmMove(40, -0.65, 3);
     Move(0.15, 30, 3, 0);
 
     //score high
     Intake(-80, 2 ,1);
+
+    //move back and lower arms to ready for user control
+    Move(-0.2, 20, 3, 0);
+    ArmMove(40, 0.5, 3);
+    ArmSystem.stop(vex::brakeType::coast);
+    vex::task::sleep(2000);
+    ArmSystem.stop(vex::brakeType::hold);
 ///////////////////////////////////////////
     /*
     //turn to face tower
@@ -439,13 +422,11 @@ void autonomous(void) {
   if(side == SKILLS)
   {
     //set arm motor encoders
-    LeftArmMotor.resetRotation();
-    RightArmMotor.resetRotation();
+    ArmSystem.resetRotation();
     //setup to takeout arms
     ArmMove(100, -0.2, 2);
     vex::task::sleep(100);
-    LeftArmMotor.stop(vex::brakeType(coast));
-    RightArmMotor.stop(vex::brakeType(coast));
+    ArmSystem.stop(vex::brakeType(coast));
     vex::task::sleep(250);
     Move(-.1,40,2,1);
     vex::task::sleep(100);
@@ -462,8 +443,7 @@ void autonomous(void) {
     Move(-0.15, 25, 2, 0);
     //move arms up to tower
     ArmMove(40, -0.7, 3);
-    LeftArmMotor.stop(vex::brakeType(hold));
-    RightArmMotor.stop(vex::brakeType(hold));
+    ArmSystem.stop(vex::brakeType(hold));
     vex::task::sleep(250);
     //move forward to realign arms with tower
     Move(0.15, 30, 2, 0);
@@ -474,16 +454,15 @@ void autonomous(void) {
     Move(-0.2, 30, 2, 0);
     vex::task::sleep(100);
     //turn to gather preload
-    Gyroscope.GyroTurn(60, 30);
+    Gyroscope.GyroTurn(-60, 30);
     //slowly lower arms
     ArmMove(50, 0.5, 2);
-    LeftArmMotor.stop(vex::brakeType(coast));
-    RightArmMotor.stop(vex::brakeType(coast));
+    ArmSystem.stop(vex::brakeType(coast));
     vex::task::sleep(500);
     //intake cube
     Move(0.9, 40, 2, 1);
     //turn to tower
-    Gyroscope.GyroTurn(-60, 30);
+    Gyroscope.GyroTurn(60, 30);
     //realign with back wall
     Move(-0.45, 50, 3, 0);
     vex::task::sleep(250);
@@ -501,8 +480,7 @@ void autonomous(void) {
     Intake(-80, 3 ,1);
     //lower arms
     ArmMove(80, 0.5, 2);
-    LeftArmMotor.stop(vex::brakeType(coast));
-    RightArmMotor.stop(vex::brakeType(coast));
+    ArmSystem.stop(vex::brakeType(coast));
     vex::task::sleep(250);
     //intake cube
     Move(-0.1, 50, 2, 1);
@@ -540,8 +518,7 @@ void autonomous(void) {
     Move(-0.5, 30, 3, 0);
     vex::task::sleep(100);
     ArmMove(50, 0.5, 2);
-    LeftArmMotor.stop(vex::brakeType(coast));
-    RightArmMotor.stop(vex::brakeType(coast));
+    ArmSystem.stop(vex::brakeType(coast));
     vex::task::sleep(100);
     //turn to score zone
     Gyroscope.GyroTurn(-80, 30);
@@ -565,20 +542,16 @@ void autonomous(void) {
       {
         logger.nextPosition(80, 80, 20);
       }
-
       inFile.close();
     }
 
     else
     {
-      LightSensor lighter;
-      Move(1, 30, 3, 1);
-      while(!(lighter.blockIsIn()))
-      {
-        Move(0.25, 40, 2, 1);
-        vex::task::sleep(250);
-      }
-      Move(-1, 50, 2, 0);
+      Brain.Screen.printAt(100, 100, "Hello test!");
+      //Gyroscope.GyroTest();
+      //Gyroscope.GyroTurn(-100, 30);
+      //vex::task::sleep(100);
+      //Gyroscope.GyroTurn(100, 30);
     }
 
     /*
@@ -644,13 +617,11 @@ void autonomous(void) {
   if(side == BLUE_VS_USC)
   {
     //set arm motor encoders
-    LeftArmMotor.resetRotation();
-    RightArmMotor.resetRotation();
+    ArmSystem.resetRotation();
     //setup to takeout arms
     ArmMove(100, -0.2, 2);
     vex::task::sleep(100);
-    LeftArmMotor.stop(vex::brakeType(coast));
-    RightArmMotor.stop(vex::brakeType(coast));
+    ArmSystem.stop(vex::brakeType(coast));
     vex::task::sleep(250);
     Move(-.1,40,2,1);
     vex::task::sleep(100);
@@ -667,8 +638,7 @@ void autonomous(void) {
     Move(-0.15, 25, 2, 0);
     //move arms up to tower
     ArmMove(40, -0.7, 3);
-    LeftArmMotor.stop(vex::brakeType(hold));
-    RightArmMotor.stop(vex::brakeType(hold));
+    ArmSystem.stop(vex::brakeType(hold));
     vex::task::sleep(250);
     //move forward
     Move(0.15, 30, 2, 0);
@@ -679,16 +649,15 @@ void autonomous(void) {
     Move(-0.2, 30, 2, 0);
     //turn to gather preload
     vex::task::sleep(100);
-    Gyroscope.GyroTurn(60, 30);
+    Gyroscope.GyroTurn(-60, 30);
     //slowly lower arms
     ArmMove(50, 0.5, 2);
-    LeftArmMotor.stop(vex::brakeType(coast));
-    RightArmMotor.stop(vex::brakeType(coast));
+    ArmSystem.stop(vex::brakeType(coast));
     vex::task::sleep(500);
     //intake cube
     Move(0.9, 40, 2, 1);
     //turn to tower
-    Gyroscope.GyroTurn(-60, 30);
+    Gyroscope.GyroTurn(60, 30);
     //realign with back wall
     Move(-0.45, 50, 3, 0);
     vex::task::sleep(250);
@@ -704,8 +673,7 @@ void autonomous(void) {
     Intake(-80, 3 ,1);
     //lower arms
     ArmMove(80, 0.5, 2);
-    LeftArmMotor.stop(vex::brakeType(coast));
-    RightArmMotor.stop(vex::brakeType(coast));
+    ArmSystem.stop(vex::brakeType(coast));
     vex::task::sleep(250);
     //intake cube
     Move(-0.1, 50, 2, 1);
@@ -716,7 +684,7 @@ void autonomous(void) {
     //move back to line up cube push
     Move(-0.4, 50, 2, 0);
     //turn to face cube
-    Gyroscope.GyroTurn(-25, 30);
+    Gyroscope.GyroTurn(25, 30);
     //push cube into score zone
     Move(-0.7, 80, 2, 0);
     vex::task::sleep(250);
@@ -732,7 +700,7 @@ void autonomous(void) {
     LeftBackMotor.stop(vex::brakeType::hold);
     RightBackMotor.stop(vex::brakeType::hold);
     //turn to face back toward tower
-    Gyroscope.GyroTurn(-94, 25);
+    Gyroscope.GyroTurn(94, 25);
     vex::task::sleep(100);
     //release intake system and push left side tower
     ArmMove(100,-.3, 2);
@@ -745,9 +713,9 @@ void autonomous(void) {
     //move forward to intake cube 
     Move(.4,40,1, 1);
     //move around tower to get a straight push into the 
-    Gyroscope.GyroTurn(24,30);
+    Gyroscope.GyroTurn(-24,30);
     Move(-.4,25,2, 0);
-    Gyroscope.GyroTurn(-73,25);
+    Gyroscope.GyroTurn(73,25);
     vex::task::sleep(150);
 
     //push into corner
@@ -757,7 +725,7 @@ void autonomous(void) {
     Move(1,50, 2, 0);
 
     //face middle tower
-    Gyroscope.GyroTurn(95, 30);
+    Gyroscope.GyroTurn(-95, 30);
     //go to tower
     Move(0.7, 30, 3, 0);
     //move arms up
@@ -767,7 +735,7 @@ void autonomous(void) {
 ///////////////////////////////////////////
     /*
     //turn to face tower
-    Gyroscope.GyroTurn(-64,35);
+    Gyroscope.GyroTurn(64,35);
     vex::task::sleep(100);
     //move arms up
     ArmMove(40, -1.2);
@@ -795,8 +763,8 @@ void autonomous(void) {
 ---------------------------------------------------------------------------*/
 
 void TankDrive() {
-  LeftFrontMotor.spin(vex::directionType::rev, Controller1.Axis3.position(),vex::velocityUnits::pct);
-  RightFrontMotor.spin(vex::directionType::rev, Controller1.Axis2.position(),vex::velocityUnits::pct);
+  LeftFrontMotor.spin(vex::directionType::fwd, Controller1.Axis3.position(),vex::velocityUnits::pct);
+  RightFrontMotor.spin(vex::directionType::fwd, Controller1.Axis2.position(),vex::velocityUnits::pct);
   LeftBackMotor.spin(vex::directionType::fwd, Controller1.Axis3.position(),vex::velocityUnits::pct);
   RightBackMotor.spin(vex::directionType::fwd, Controller1.Axis2.position(),vex::velocityUnits::pct);
 }
@@ -814,8 +782,7 @@ void TankDrive() {
 
 void usercontrol(void) {
   // User control code here, inside the loop
-  LeftArmMotor.resetRotation();
-  RightArmMotor.resetRotation();
+  ArmSystem.resetRotation();
 
   std::ofstream outFile;
 
@@ -859,15 +826,15 @@ void usercontrol(void) {
     //TankDrive();
     LeftBackMotor.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
     RightBackMotor.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
-    LeftFrontMotor.spin(vex::directionType::rev, Controller1.Axis3.position(), vex::velocityUnits::pct);
-    RightFrontMotor.spin(vex::directionType::rev, Controller1.Axis2.position(), vex::velocityUnits::pct);
+    LeftFrontMotor.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
+    RightFrontMotor.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
     if(Controller1.ButtonL2.pressing()) { 
-        //...Spin the arm motor out.
+        //intake
         LeftIntakeMotor.spin(vex::directionType::rev, -80, vex::velocityUnits::pct);
         RightIntakeMotor.spin(vex::directionType::fwd, -80, vex::velocityUnits::pct);
     }
     else if(Controller1.ButtonR2.pressing()) { 
-        //...Spin the arm motor in.
+        //outtake
         LeftIntakeMotor.spin(vex::directionType::rev, 80, vex::velocityUnits::pct);
         RightIntakeMotor.spin(vex::directionType::fwd, 80, vex::velocityUnits::pct);
     }
@@ -880,91 +847,33 @@ void usercontrol(void) {
       }
       if(Controller1.ButtonR1.pressing()){
       //arm system down
-        LeftArmMotor.spin(vex::directionType::fwd, 90, vex::velocityUnits::pct);
-        RightArmMotor.spin(vex::directionType::rev, 90, vex::velocityUnits::pct);
-    
+        ArmSystem.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
       }
       else if(Controller1.ButtonL1.pressing()){
       //arm system up
-        LeftArmMotor.spin(vex::directionType::fwd, -90, vex::velocityUnits::pct);
-        RightArmMotor.spin(vex::directionType::rev, -90, vex::velocityUnits::pct);
-    
+        ArmSystem.spin(vex::directionType::fwd, -50, vex::velocityUnits::pct);
       }
     else{
-      RightArmMotor.stop(vex::brakeType::hold);
-      LeftArmMotor.stop(vex::brakeType::hold);
+      ArmSystem.stop(vex::brakeType::hold);
     }
     // arm motor;
       if(Controller1.ButtonA.pressing() || lowTowerTask)
       {
-        lowTowerTask = true;
-        midTowerTask = false;
-        highTowerTask = false;
-        //arms go up to score on the lower towers
-        if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.1 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.1)
-        {
-          //position arms up
-          LeftArmMotor.spin(vex::directionType::fwd, -40, vex::velocityUnits::pct);
-          RightArmMotor.spin(vex::directionType::rev, -40, vex::velocityUnits::pct);
-        }
-        else if(LeftArmMotor.rotation(vex::rotationUnits::rev) < -1.1 && RightArmMotor.rotation(vex::rotationUnits::rev)  < -1.1)
-        {
-          //position arms down
-          LeftArmMotor.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
-          RightArmMotor.spin(vex::directionType::rev, 40, vex::velocityUnits::pct);
-        }
-        else
-        {
-          //condiition satisfied
-          lowTowerTask = false;
-          if(editor)
-          {
-            LeftArmMotor.stop(vex::brakeType::brake);
-            RightArmMotor.stop(vex::brakeType::brake);  
-          }
-          else
-          {
-            LeftArmMotor.stop(vex::brakeType::hold);
-            RightArmMotor.stop(vex::brakeType::hold);
-          }
-        }
+        ArmSystem.spinTo(0.7, vex::rotationUnits::rev);
       }
       if(Controller1.ButtonB.pressing() || midTowerTask)
       {
-        lowTowerTask = false;
-        midTowerTask = true;
-        highTowerTask = false;
-        //arms go up to score on the lower towers
-        if(LeftArmMotor.rotation(vex::rotationUnits::rev) > -1.2 && RightArmMotor.rotation(vex::rotationUnits::rev)  > -1.2)
-        {
-          //position arms up
-          LeftArmMotor.spin(vex::directionType::fwd, -40, vex::velocityUnits::pct);
-          RightArmMotor.spin(vex::directionType::rev, -40, vex::velocityUnits::pct);
-        }
-        else if(LeftArmMotor.rotation(vex::rotationUnits::rev) < -1.3 && RightArmMotor.rotation(vex::rotationUnits::rev)  < -1.3)
-        {
-          //position arms down
-          LeftArmMotor.spin(vex::directionType::fwd, 40, vex::velocityUnits::pct);
-          RightArmMotor.spin(vex::directionType::rev, 40, vex::velocityUnits::pct);
-        }
-        else
-        {
-          //condition satisfied
-          midTowerTask = false;
-          LeftArmMotor.stop(vex::brakeType::hold);
-          RightArmMotor.stop(vex::brakeType::hold);
-        }
+        ArmSystem.spinTo(0.8, vex::rotationUnits::rev);
       }
       if(Controller1.ButtonX.pressing())
       {
         lowTowerTask = false;
         midTowerTask = false;
         highTowerTask = false;
-        RightArmMotor.stop(vex::brakeType::hold);
-        LeftArmMotor.stop(vex::brakeType::hold);
+        ArmSystem.stop(vex::brakeType::hold);
       }
       if(Controller1.ButtonUp.pressing() && Brain.SDcard.isInserted() && editor)
-      {
+      { 
         vex::task::sleep(500);
         if(Data_Logging)
         {
@@ -973,14 +882,13 @@ void usercontrol(void) {
             //increase loop counter variable-
             count++;
             //record current encoder rotation values of each motor
-            outFile << RightArmMotor.rotation(vex::rotationUnits::rev) << ',' //rightArmMotor rotation value
-                    << LeftArmMotor.rotation(vex::rotationUnits::rev) << ',' //leftArmMotor rotaion value
-                    << RightIntakeMotor.rotation(vex::rotationUnits::rev) << ',' //rightIntakeMotor rotaion value
-                    << LeftIntakeMotor.rotation(vex::rotationUnits::rev) << ',' //leftIntakeMotor rotation value
+            outFile << ArmSystem.rotation(vex::rotationUnits::rev) << ',' //ArmSystem rotation value
+                    << IntakeSystem.rotation(vex::rotationUnits::rev) << ',' //IntakeSystem rotaion value
                     << RightBackMotor.rotation(vex::rotationUnits::rev) << ',' //rightBackMotor rotation value
                     << LeftBackMotor.rotation(vex::rotationUnits::rev) << ',' //leftBackMotor rotation value
                     << RightFrontMotor.rotation(vex::rotationUnits::rev) << ',' //rightFrontMotor rotation value
-                    << LeftFrontMotor.rotation(vex::rotationUnits::rev) << '\n'; //leftFrontMotor rotation value
+                    << LeftFrontMotor.rotation(vex::rotationUnits::rev) << ',' //leftFrontMotor rotation value
+                    << Gyro.value(vex::rotationUnits::deg) << '\n';
             //print message for UI
             Brain.Screen.clearScreen();
             Brain.Screen.printAt(10, 30, "Values recorded %d times", count);
@@ -991,14 +899,13 @@ void usercontrol(void) {
           else
           {
             outFile.open("Data_Logging.txt", std::ofstream::out);
-            outFile << 0 << ',' //rightArmMotor rotation value
-                    << 0 << ',' //leftArmMotor rotaion value
-                    << 0 << ',' //rightIntakeMotor rotaion value
-                    << 0 << ',' //leftIntakeMotor rotation value
+            outFile << 0 << ',' //ArmSystem rotation value
+                    << 0 << ',' //IntakeSystem rotaion value
                     << 0 << ',' //rightBackMotor rotation value
                     << 0 << ',' //leftBackMotor rotation value
                     << 0 << ',' //rightFrontMotor rotation value
                     << 0 << ',' //leftFrontMotor rotation value
+                    << 0 << ',' //Gyrosensor degree turn
                     << '\n';
             if(outFile.is_open())
             {
@@ -1014,8 +921,7 @@ void usercontrol(void) {
         {
           Data_Logging = true;
           //reset rotation of motor in order as their values will appear on the .txt file
-          RightArmMotor.resetRotation();
-          LeftArmMotor.resetRotation();
+          ArmSystem.resetRotation();
           RightIntakeMotor.resetRotation();
           LeftIntakeMotor.resetRotation();
           RightBackMotor.resetRotation();
